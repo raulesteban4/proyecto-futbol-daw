@@ -40,6 +40,17 @@ app.post('/api/jugadores', (req, res) => {
     });
 });
 
+// Eliminar jugadores
+app.delete('/api/jugadores/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = "DELETE FROM jugadores WHERE id = ?";
+    
+    db.query(sql, [id], (err, result) => {
+        if (err) return res.status(500).json(err);
+        res.json({ message: "Jugador eliminado" });
+    });
+});
+
 app.listen(5000, () => {
     console.log("Servidor corriendo en el puerto 5000");
 });
