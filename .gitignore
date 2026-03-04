@@ -1,3 +1,14 @@
+# Ignorar dependencias de Node
 **/node_modules/
-**/dist/
+node_modules/
+
+# Ignorar archivos de configuración local
 .env
+
+# Ignorar carpetas de compilación
+**/dist/
+**/build/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
