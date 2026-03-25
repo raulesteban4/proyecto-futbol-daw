@@ -3,7 +3,6 @@ CREATE DATABASE IF NOT EXISTS proyecto_futbol;
 USE proyecto_futbol;
 
 -- 2. ELIMINACIÓN DE TABLAS (Por si quieres ejecutar el script de cero)
--- El orden importa por las claves foráneas
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS products;

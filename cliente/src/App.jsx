@@ -24,7 +24,7 @@ function App() {
     if (window.confirm("¿Deseas eliminar a este jugador?")) {
       axios.delete(`http://localhost:5000/api/jugadores/${id}`)
         .then(() => {
-          // OPCIÓN SÚPER RÁPIDA: Lo borramos del estado de React directamente
+          // Lo borramos del estado de React directamente
           // Así desaparece visualmente al instante sin esperar al servidor
           setJugadores(prevJugadores => prevJugadores.filter(j => j.id !== id));
           console.log("Borrado con éxito");
