@@ -1,0 +1,44 @@
+.navbar {
+  background-color: #1e3a8a; /* Tu azul oscuro */
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a, .cart-link, .login-link {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.nav-links a:hover, .cart-link:hover {
+  text-decoration: underline;
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-logout:hover {
+  background: white;
+  color: #1e3a8a;
+}
