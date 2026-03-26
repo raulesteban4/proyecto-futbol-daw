@@ -95,19 +95,45 @@ app.post('/api/login', (req, res) => {
 
 // RECIBIR PEDIDOS
 app.post('/api/pedidos', (req, res) => {
-    const { user_id, total } = req.body;
-    // Insertamos el pedido. El estado se pone 'pendiente' por defecto en la BD
-    const sql = "INSERT INTO orders (user_id, total) VALUES (?, ?)";
+    const { user_id, total, productos } = req.body;
+
+    // 1. Insertamos el pedido principal
+    const sqlOrder = "INSERT INTO orders (user_id, total) VALUES (?, ?)";
     
-    db.query(sql, [user_id, total], (err, result) => {
+    db.query(sqlOrder, [user_id, total], (err, result) => {
         if (err) {
-            console.error(err);
-            return res.status(500).json({ error: "Error al guardar el pedido" });
+            console.error("Error al crear pedido:", err);
+            return res.status(500).json({ error: "Error al crear el pedido" });
         }
-        res.status(200).json({ 
-            message: "Pedido guardado con éxito", 
-            pedidoId: result.insertId 
+
+        const pedidoId = result.insertId;
+
+        // 2. Insertamos cada producto del carrito en order_items
+        const values = productos.map(item => [pedidoId, item.id, item.quantity, item.precio]);
+        const sqlItems = "INSERT INTO order_items (order_id, product_id, cantidad, precio_unitario) VALUES ?";
+
+        db.query(sqlItems, [values], (errItems) => {
+            if (errItems) {
+                console.error("Error al guardar detalles:", errItems);
+                return res.status(500).json({ error: "Error al guardar los detalles del pedido" });
+            }
+            
+            res.status(200).json({ 
+                message: "Pedido completo guardado", 
+                pedidoId: pedidoId 
+            });
         });
+    });
+});
+
+// Lista de compras por usuario
+app.get('/api/pedidos/:user_id', (req, res) => {
+    const { user_id } = req.params;
+    const sql = "SELECT * FROM orders WHERE user_id = ? ORDER BY fecha DESC";
+    
+    db.query(sql, [user_id], (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.json(result);
     });
 });
 

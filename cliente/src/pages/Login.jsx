@@ -31,30 +31,36 @@ function Login() {
                 <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                         <label>Correo Electrónico:</label>
-                        <input 
-                            type="email" 
-                            placeholder="ejemplo@correo.com" 
+                        <input
+                            type="email"
+                            placeholder="ejemplo@correo.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ddd' }}
-                            required 
+                            required
                         />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                         <label>Contraseña:</label>
-                        <input 
-                            type="password" 
-                            placeholder="********" 
+                        <input
+                            type="password"
+                            placeholder="********"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ddd' }}
-                            required 
+                            required
                         />
                     </div>
                     <button type="submit" className="btn-comprar" style={{ marginTop: '10px' }}>
                         ENTRAR
                     </button>
                 </form>
+                <p style={{ textAlign: 'center', marginTop: '15px', fontSize: '14px' }}>
+                        ¿No tienes cuenta?
+                    <span onClick={() => navigate('/registro')} style={{ color: '#1e3a8a', cursor: 'pointer', fontWeight: 'bold', textDecoration: 'underline' }}>
+                        &nbsp;Regístrate aquí
+                    </span>
+                </p>
             </div>
         </div>
     );

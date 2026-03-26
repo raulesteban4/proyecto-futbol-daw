@@ -23,7 +23,8 @@ function Carrito() {
         // 2. Enviar el pedido al servidor (Backend)
         axios.post('http://localhost:5000/api/pedidos', {
             user_id: user.id,
-            total: total
+            total: total,
+            productos: cart // <--- Enviamos todo el array de productos
         })
         .then(res => {
             alert(`¡Pedido realizado con éxito! ID de pedido: ${res.data.pedidoId}`);
@@ -51,7 +52,7 @@ function Carrito() {
             <div className="carrito-lista">
                 {cart.map(item => (
                     <div key={item.id} className="item-carrito">
-                        <img src={item.imagen_url || 'https://via.placeholder.com/100'} alt={item.nombre} />
+                        <img src={item.imagen_url} alt={item.nombre} />
                         <div className="item-info">
                             <h3>{item.nombre}</h3>
                             <p>Precio: {item.precio}€</p>

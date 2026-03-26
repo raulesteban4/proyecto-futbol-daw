@@ -62,6 +62,18 @@ CREATE TABLE orders (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+-- Tabla de detalles de los pedidos
+
+CREATE TABLE order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT,
+    product_id INT,
+    cantidad INT,
+    precio_unitario DECIMAL(10, 2),
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
 -- 4. DATOS DE EJEMPLO (Para que la web tenga contenido inicial)
 
 -- Insertar un equipo
@@ -79,3 +91,5 @@ INSERT INTO products (nombre, descripcion, precio, stock, categoria) VALUES
 ('Camiseta Oficial', 'Equipación local 2026', 75.00, 50, 'Ropa'),
 ('Balón de Entrenamiento', 'Resistente para césped artificial', 25.00, 20, 'Accesorios'),
 ('Bufanda del Club', '100% acrílico, colores oficiales', 15.50, 100, 'Merchandising');
+
+INSERT INTO users (username, password, email, rol) VALUES ('Raul', '1234', 'raul@test.com', 'admin');
