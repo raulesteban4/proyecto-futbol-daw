@@ -59,11 +59,11 @@ app.get('/api/productos', (req, res) => {
     });
 });
 
-// Añadir producto - Por si quieres gestionarlo desde la web
-app.post('/api/productos', (req, res) => {
-    const { nombre, descripcion, precio, stock, categoria } = req.body;
-    const sql = "INSERT INTO products (nombre, descripcion, precio, stock, categoria) VALUES (?, ?, ?, ?, ?)";
-    db.query(sql, [nombre, descripcion, precio, stock, categoria], (err, result) => {
+// Añadir nuevo producto
+app.post('/api/admin/productos', (req, res) => {
+    const { nombre, descripcion, precio, stock, categoria, imagen_url } = req.body;
+    const sql = "INSERT INTO products (nombre, descripcion, precio, stock, categoria, imagen_url) VALUES (?, ?, ?, ?, ?, ?)";
+    db.query(sql, [nombre, descripcion, precio, stock, categoria, imagen_url], (err, result) => {
         if (err) return res.status(500).send(err);
         res.json({ message: "Producto añadido", id: result.insertId });
     });
@@ -72,9 +72,19 @@ app.post('/api/productos', (req, res) => {
 // Registro de usuario
 app.post('/api/registro', (req, res) => {
     const { username, password, email } = req.body;
+    if (!username || !password || !email) {
+        return res.status(400).json({ message: "Faltan campos obligatorios" });
+    }
+
     const sql = "INSERT INTO users (username, password, email, rol) VALUES (?, ?, ?, 'user')";
     db.query(sql, [username, password, email], (err, result) => {
-        if (err) return res.status(500).json(err);
+        if (err) {
+            // Si el error es porque el usuario o email ya existen
+            if (err.code === 'ER_DUP_ENTRY') {
+                return res.status(400).json({ message: "El usuario o email ya están registrados" });
+            }
+            return res.status(500).json(err);
+        }
         res.status(200).json({ message: "Usuario registrado" });
     });
 });
@@ -82,17 +92,20 @@ app.post('/api/registro', (req, res) => {
 // Login de usuario
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
-    const sql = "SELECT * FROM users WHERE email = ? AND password = ?";
+    const sql = "SELECT id, username, rol FROM users WHERE email = ? AND password = ?"; // Buscamos por email
+    
     db.query(sql, [email, password], (err, result) => {
-        if (err) return res.status(500).json(err);
+        if (err) return res.status(500).send(err);
+        
         if (result.length > 0) {
-            res.status(200).json(result[0]); // Enviamos los datos del usuario
+            // Si las credenciales coinciden, devolvemos el usuario
+            return res.json(result[0]);
         } else {
-            res.status(401).json({ message: "Credenciales incorrectas" });
+            // Si no hay coincidencias (email o pass incorrectos)
+            return res.status(401).send("Correo o contraseña incorrectos");
         }
     });
 });
-
 // RECIBIR PEDIDOS
 app.post('/api/pedidos', (req, res) => {
     const { user_id, total, productos } = req.body;
@@ -134,6 +147,74 @@ app.get('/api/pedidos/:user_id', (req, res) => {
     db.query(sql, [user_id], (err, result) => {
         if (err) return res.status(500).send(err);
         res.json(result);
+    });
+});
+
+// Devuelve los nombres de los productos y sus cantidades.
+app.get('/api/pedidos/detalles/:order_id', (req, res) => {
+    const { order_id } = req.params;
+    const sql = `
+        SELECT oi.*, p.nombre 
+        FROM order_items oi 
+        JOIN products p ON oi.product_id = p.id 
+        WHERE oi.order_id = ?`;
+    
+    db.query(sql, [order_id], (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.json(result);
+    });
+});
+
+// Obtener la clasificación de la liga
+app.get('/api/clasificacion', (req, res) => {
+    const sql = "SELECT * FROM ranking ORDER BY posicion ASC";
+    db.query(sql, (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.json(result);
+    });
+});
+
+// Obtener el calendario de partidos
+app.get('/api/partidos', (req, res) => {
+    const sql = "SELECT * FROM matches ORDER BY fecha ASC";
+    db.query(sql, (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.json(result);
+    });
+});
+
+// --- GESTIÓN DE PARTIDOS ---
+// Actualizar resultado de un partido
+app.put('/api/admin/partidos/:id', (req, res) => {
+    const { id } = req.params;
+    const { goles_local, goles_visitante, jugado } = req.body;
+    const sql = "UPDATE matches SET goles_local = ?, goles_visitante = ?, jugado = ? WHERE id = ?";
+    db.query(sql, [goles_local, goles_visitante, jugado, id], (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.json({ message: "Partido actualizado" });
+    });
+});
+
+// --- GESTIÓN DE CLASIFICACIÓN ---
+// Actualizar puntos de un equipo
+app.put('/api/admin/ranking/:id', (req, res) => {
+    const { id } = req.params;
+    const { pj, puntos, posicion } = req.body;
+    const sql = "UPDATE ranking SET pj = ?, puntos = ?, posicion = ? WHERE id = ?";
+    db.query(sql, [pj, puntos, posicion, id], (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.json({ message: "Ranking actualizado" });
+    });
+});
+
+// --- GESTIÓN DE PRODUCTOS (Tienda) ---
+// Añadir nuevo producto
+app.post('/api/admin/productos', (req, res) => {
+    const { nombre, descripcion, precio, stock, categoria, imagen_url } = req.body;
+    const sql = "INSERT INTO products (nombre, descripcion, precio, stock, categoria, imagen_url) VALUES (?, ?, ?, ?, ?, ?)";
+    db.query(sql, [nombre, descripcion, precio, stock, categoria, imagen_url], (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.json({ message: "Producto añadido", id: result.insertId });
     });
 });
 

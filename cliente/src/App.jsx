@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useUser } from './context/UserContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Plantilla from './pages/Plantilla';
@@ -7,8 +8,11 @@ import Carrito from './pages/Carrito';
 import Login from './pages/Login';
 import Registro from './pages/Registro';
 import Perfil from './pages/Perfil';
+import Competicion from './pages/Competicion';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
+  const { user } = useUser();
   return (
     <Router>
       <Navbar />
@@ -21,6 +25,11 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/perfil" element={<Perfil />} />
+          <Route path="/competicion" element={<Competicion />} />
+          <Route
+            path="/admin"
+            element={user && user.rol === 'admin' ? <AdminDashboard /> : <Navigate to="/" />}
+          />
         </Routes>
       </div>
     </Router>

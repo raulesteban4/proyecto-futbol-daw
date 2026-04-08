@@ -2,18 +2,19 @@
 CREATE DATABASE IF NOT EXISTS proyecto_futbol;
 USE proyecto_futbol;
 
--- 2. ELIMINACIÓN DE TABLAS (Por si quieres ejecutar el script de cero)
+-- 2. LIMPIEZA TOTAL
 SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS order_items;
 DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS players;
 DROP TABLE IF EXISTS teams;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS matches;
+DROP TABLE IF EXISTS ranking;
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- 3. CREACIÓN DE TABLAS
-
--- Tabla de Equipos
 CREATE TABLE teams (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -21,7 +22,6 @@ CREATE TABLE teams (
     liga VARCHAR(100)
 );
 
--- Tabla de Usuarios
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -31,17 +31,19 @@ CREATE TABLE users (
     direccion TEXT
 );
 
--- Tabla de Jugadores
 CREATE TABLE players (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     posicion VARCHAR(50),
     dorsal INT,
     team_id INT,
+    goles INT DEFAULT 0,
+    asistencias INT DEFAULT 0,
+    amarillas INT DEFAULT 0,
+    rojas INT DEFAULT 0,
     FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE SET NULL
 );
 
--- Tabla de Productos
 CREATE TABLE products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -52,17 +54,14 @@ CREATE TABLE products (
     categoria VARCHAR(50)
 );
 
--- Tabla de Pedidos
 CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
     total DECIMAL(10, 2),
     estado ENUM('pendiente', 'pagado', 'enviado') DEFAULT 'pendiente',
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
-
--- Tabla de detalles de los pedidos
 
 CREATE TABLE order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -70,26 +69,46 @@ CREATE TABLE order_items (
     product_id INT,
     cantidad INT,
     precio_unitario DECIMAL(10, 2),
-    FOREIGN KEY (order_id) REFERENCES orders(id),
-    FOREIGN KEY (product_id) REFERENCES products(id)
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
--- 4. DATOS DE EJEMPLO (Para que la web tenga contenido inicial)
+CREATE TABLE matches (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    rival VARCHAR(100),
+    fecha DATETIME,
+    ubicacion VARCHAR(100),
+    goles_local INT DEFAULT 0,
+    goles_visitante INT DEFAULT 0,
+    jugado BOOLEAN DEFAULT FALSE
+);
 
--- Insertar un equipo
-INSERT INTO teams (nombre, escudo_url, liga) 
-VALUES ('FC Cañaveral', 'https://via.placeholder.com/150', 'Liga Local');
+-- Tabla extra para la clasificación de la liga
+CREATE TABLE ranking (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    equipo VARCHAR(100) NOT NULL,
+    pj INT DEFAULT 0, -- Partidos Jugados
+    puntos INT DEFAULT 0,
+    posicion INT
+);
 
--- Insertar jugadores iniciales (Asumiendo que el equipo tiene ID 1)
-INSERT INTO players (nombre, posicion, dorsal, team_id) VALUES 
-('Luka Modric', 'Centrocampista', 10, 1),
-('Vinicius Jr', 'Delantero', 7, 1),
-('Thibaut Courtois', 'Portero', 1, 1);
+-- 4. DATOS DE PRUEBA
+INSERT INTO teams (nombre, escudo_url, liga) VALUES ('FC Cañaveral', 'https://via.placeholder.com/150', 'Liga Local');
 
--- Insertar productos para la tienda
+INSERT INTO players (nombre, posicion, dorsal, team_id, goles, asistencias) VALUES 
+('Luka Modric', 'Centrocampista', 10, 1, 5, 12),
+('Vinicius Jr', 'Delantero', 7, 1, 15, 8),
+('Thibaut Courtois', 'Portero', 1, 1, 0, 0);
+
 INSERT INTO products (nombre, descripcion, precio, stock, categoria) VALUES 
 ('Camiseta Oficial', 'Equipación local 2026', 75.00, 50, 'Ropa'),
 ('Balón de Entrenamiento', 'Resistente para césped artificial', 25.00, 20, 'Accesorios'),
 ('Bufanda del Club', '100% acrílico, colores oficiales', 15.50, 100, 'Merchandising');
 
 INSERT INTO users (username, password, email, rol) VALUES ('Raul', '1234', 'raul@test.com', 'admin');
+
+-- Datos para que la tabla de clasificación no esté vacía
+INSERT INTO ranking (equipo, pj, puntos, posicion) VALUES 
+('FC Cañaveral', 10, 25, 1),
+('Rival FC', 10, 22, 2),
+('Barrio Unido', 10, 18, 3);

@@ -14,6 +14,13 @@ function Navbar() {
                 <Link to="/">INICIO</Link>
                 <Link to="/plantilla">PLANTILLA</Link>
                 <Link to="/tienda">TIENDA</Link>
+                <Link to="/competicion" className="nav-link">COMPETICIÓN</Link>
+                {/* Solo se muestra si el usuario está logueado Y es admin */}
+                {user && user.rol === 'admin' && (
+                    <Link to="/admin" style={{ color: '#fbbf24', fontWeight: 'bold' }}>
+                        GESTIÓN
+                    </Link>
+                )}
             </div>
             <div className="nav-user">
                 <Link to="/carrito" className="cart-link">🛒 Carrito ({totalItems})</Link>
