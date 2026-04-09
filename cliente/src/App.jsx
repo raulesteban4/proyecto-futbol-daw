@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useUser } from './context/UserContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -14,7 +14,7 @@ import AdminDashboard from './pages/AdminDashboard';
 function App() {
   const { user } = useUser();
   return (
-    <Router>
+    <BrowserRouter>
       <Navbar />
       <div className="main-container">
         <Routes>
@@ -28,11 +28,17 @@ function App() {
           <Route path="/competicion" element={<Competicion />} />
           <Route
             path="/admin"
-            element={user && user.rol === 'admin' ? <AdminDashboard /> : <Navigate to="/" />}
+            element={
+              user && user.rol === 'admin' ? (
+                <AdminDashboard />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            }
           />
         </Routes>
       </div>
-    </Router>
+    </BrowserRouter>
   );
 }
 

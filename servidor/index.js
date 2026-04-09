@@ -32,11 +32,24 @@ app.get('/api/jugadores', (req, res) => {
 // Para añadir jugadores
 app.post('/api/jugadores', (req, res) => {
     const { nombre, posicion, dorsal, team_id } = req.body;
-    const sql = "INSERT INTO players (nombre, posicion, dorsal, team_id) VALUES (?, ?, ?, ?)";
+
+    // 1. Primero comprobamos si el dorsal ya está ocupado
+    const checkSql = "SELECT * FROM players WHERE dorsal = ? AND team_id = ?";
     
-    db.query(sql, [nombre, posicion, dorsal, team_id], (err, result) => {
+    db.query(checkSql, [dorsal, team_id], (err, result) => {
         if (err) return res.status(500).json(err);
-        res.json({ message: "Jugador fichado!", id: result.insertId });
+        
+        if (result.length > 0) {
+            // Si ya hay un jugador con ese dorsal, enviamos un error
+            return res.status(400).json({ message: `El dorsal ${dorsal} ya está ocupado.` });
+        }
+
+        // 2. Si el dorsal está libre, insertamos el jugador
+        const insertSql = "INSERT INTO players (nombre, posicion, dorsal, team_id) VALUES (?, ?, ?, ?)";
+        db.query(insertSql, [nombre, posicion, dorsal, team_id], (err, insertResult) => {
+            if (err) return res.status(500).json(err);
+            res.json({ message: "Jugador fichado!", id: insertResult.insertId });
+        });
     });
 });
 
@@ -46,6 +59,30 @@ app.delete('/api/jugadores/:id', (req, res) => {
     db.query("DELETE FROM players WHERE id = ?", [id], (err, result) => {
         if (err) return res.status(500).send(err);
         res.json({ message: "Jugador eliminado" });
+    });
+});
+
+// Actualizar stats y dorsal jugadores.
+app.put('/api/admin/jugadores/stats/:id', (req, res) => {
+    const { id } = req.params;
+    const { dorsal, goles, asistencias, amarillas, rojas } = req.body;
+
+    // 1. Validar que el nuevo dorsal no lo tenga OTRA persona
+    const checkDorsalSql = "SELECT * FROM players WHERE dorsal = ? AND id != ?";
+    
+    db.query(checkDorsalSql, [dorsal, id], (err, result) => {
+        if (err) return res.status(500).send(err);
+        
+        if (result.length > 0) {
+            return res.status(400).json({ message: `El dorsal ${dorsal} ya está siendo usado por otro jugador.` });
+        }
+
+        // 2. Si el dorsal está libre o es el mismo, actualizamos todo
+        const sql = "UPDATE players SET dorsal = ?, goles = ?, asistencias = ?, amarillas = ?, rojas = ? WHERE id = ?";
+        db.query(sql, [dorsal, goles, asistencias, amarillas, rojas, id], (err, updateResult) => {
+            if (err) return res.status(500).send(err);
+            res.json({ message: "Jugador actualizado correctamente" });
+        });
     });
 });
 
@@ -66,6 +103,32 @@ app.post('/api/admin/productos', (req, res) => {
     db.query(sql, [nombre, descripcion, precio, stock, categoria, imagen_url], (err, result) => {
         if (err) return res.status(500).send(err);
         res.json({ message: "Producto añadido", id: result.insertId });
+    });
+});
+
+// Obtener TODAS las ventas (para el admin)
+app.get('/api/admin/ventas', (req, res) => {
+        const sql = `
+        SELECT o.*, u.email 
+        FROM orders o 
+        JOIN users u ON o.user_id = u.id 
+        ORDER BY o.fecha DESC`;
+    
+    db.query(sql, (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.json(result);
+    });
+});
+
+// Cambiar estado del pedido
+app.put('/api/admin/ventas/:id', (req, res) => {
+    const { id } = req.params;
+    const { estado } = req.body;
+    const sql = "UPDATE orders SET estado = ? WHERE id = ?";
+    
+    db.query(sql, [estado, id], (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.json({ message: "Estado actualizado" });
     });
 });
 

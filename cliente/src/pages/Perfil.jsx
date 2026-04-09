@@ -84,7 +84,7 @@ function Perfil() {
                                             <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
                                                 {detallesVisibles[p.id].map(item => (
                                                     <li key={item.id} style={{ padding: '8px 0', borderBottom: '1px dashed #eee', fontSize: '14px' }}>
-                                                        📦 <strong>{item.nombre}</strong> — {item.cantidad} x {item.precio_unitario}€
+                                                        <strong>{item.nombre}</strong> — {item.cantidad} x {item.precio_unitario}€
                                                     </li>
                                                 ))}
                                             </ul>
