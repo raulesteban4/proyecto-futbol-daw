@@ -34,6 +34,35 @@ function AdminDashboard() {
         });
     };
 
+    // --- FUNCIONES DE TIENDA ---
+    const actualizarProducto = (id) => {
+        const actualizado = {
+            nombre: document.getElementById(`prod-nom-${id}`).value,
+            precio: document.getElementById(`prod-pre-${id}`).value,
+            stock: document.getElementById(`prod-stk-${id}`).value,
+            categoria: document.getElementById(`prod-cat-${id}`).value,
+            descripcion: document.getElementById(`prod-desc-${id}`).value,
+            imagen_url: document.getElementById(`prod-img-${id}`).value
+        };
+
+        axios.put(`http://localhost:5000/api/admin/productos/${id}`, actualizado)
+            .then(() => {
+                alert("Producto actualizado con éxito");
+                cargarDatos();
+            })
+            .catch(err => alert("Error al actualizar"));
+    };
+
+    const eliminarProducto = (id) => {
+        if (window.confirm("¿Seguro que quieres eliminar este producto?")) {
+            axios.delete(`http://localhost:5000/api/admin/productos/${id}`)
+                .then(() => {
+                    alert("Producto eliminado");
+                    cargarDatos();
+                });
+        }
+    };
+
     return (
         <div style={{ padding: '30px', maxWidth: '1200px', margin: '0 auto' }}>
             <h1 style={{ color: '#1e3a8a' }}>Panel de Control - FC Cañaveral</h1>
@@ -229,7 +258,7 @@ function AdminDashboard() {
 
                 {tab === 'tienda' && (
                     <div>
-                        <h3>Nuevo Producto</h3>
+                        <h3>Añadir Nuevo Producto</h3>
                         <form onSubmit={(e) => {
                             e.preventDefault();
                             const producto = {
@@ -245,15 +274,49 @@ function AdminDashboard() {
                                 e.target.reset();
                                 cargarDatos();
                             });
-                        }} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                            <input name="nombre" placeholder="Nombre del producto" required style={inputStyle} />
+                        }} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '40px' }}>
+                            <input name="nombre" placeholder="Nombre" required style={inputStyle} />
                             <input name="precio" type="number" step="0.01" placeholder="Precio (€)" required style={inputStyle} />
                             <input name="stock" type="number" placeholder="Stock" required style={inputStyle} />
-                            <input name="categoria" placeholder="Categoría (Ropa, Accesorios...)" required style={inputStyle} />
-                            <input name="imagen" placeholder="URL de la imagen" style={inputStyle} />
+                            <input name="categoria" placeholder="Categoría" required style={inputStyle} />
+                            <input name="imagen" placeholder="URL Imagen" style={inputStyle} />
                             <textarea name="descripcion" placeholder="Descripción" style={{ ...inputStyle, gridColumn: 'span 2' }} />
                             <button type="submit" style={{ ...btnOkStyle, gridColumn: 'span 2', padding: '12px' }}>PUBLICAR PRODUCTO</button>
                         </form>
+
+                        <h3>Gestionar Inventario</h3>
+                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                            <thead>
+                                <tr style={{ backgroundColor: '#f9fafb', borderBottom: '2px solid #eee' }}>
+                                    <th>Imagen / Info</th>
+                                    <th>Precio (€)</th>
+                                    <th>Stock</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data.map(p => (
+                                    <tr key={p.id} style={{ borderBottom: '1px solid #eee' }}>
+                                        <td style={{ padding: '10px' }}>
+                                            <input id={`prod-nom-${p.id}`} defaultValue={p.nombre} style={{ ...inputStyle, fontWeight: 'bold', marginBottom: '5px' }} />
+                                            <input id={`prod-cat-${p.id}`} defaultValue={p.categoria} style={{ ...inputStyle, fontSize: '12px' }} />
+                                            <input id={`prod-img-${p.id}`} defaultValue={p.imagen_url} style={{ ...inputStyle, fontSize: '10px', marginTop: '5px' }} placeholder="URL Imagen" />
+                                            <textarea id={`prod-desc-${p.id}`} defaultValue={p.descripcion} style={{ ...inputStyle, fontSize: '12px', marginTop: '5px' }} />
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <input id={`prod-pre-${p.id}`} type="number" step="0.01" defaultValue={p.precio} style={{ ...statInputStyle, width: '70px' }} />
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <input id={`prod-stk-${p.id}`} type="number" defaultValue={p.stock} style={{ ...statInputStyle, width: '60px', fontWeight: 'bold' }} />
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <button onClick={() => actualizarProducto(p.id)} style={btnOkStyle}>Guardar</button>
+                                            <button onClick={() => eliminarProducto(p.id)} style={{ ...btnDelStyle, marginLeft: '5px' }}>Eliminar</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 )}
 

@@ -10,6 +10,7 @@ import Registro from './pages/Registro';
 import Perfil from './pages/Perfil';
 import Competicion from './pages/Competicion';
 import AdminDashboard from './pages/AdminDashboard';
+import Confirmacion from './pages/Confirmacion';
 
 function App() {
   const { user } = useUser();
@@ -36,6 +37,7 @@ function App() {
               )
             }
           />
+          <Route path="/confirmacion" element={<Confirmacion />} />
         </Routes>
       </div>
     </BrowserRouter>

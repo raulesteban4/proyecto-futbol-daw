@@ -23,18 +23,23 @@ function Carrito() {
         // 2. Enviar el pedido al servidor (Backend)
         axios.post('http://localhost:5000/api/pedidos', {
             user_id: user.id,
-            total: total,
+            total: total.toFixed(2),
             productos: cart // <--- Enviamos todo el array de productos
         })
-        .then(res => {
-            alert(`¡Pedido realizado con éxito! ID de pedido: ${res.data.pedidoId}`);
-            clearCart(); // 3. Vaciar el carrito en el contexto
-            navigate('/'); // 4. Redirigir al inicio
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Hubo un error al procesar tu pedido. Inténtalo de nuevo.");
-        });
+            .then(res => {
+                navigate('/confirmacion', {
+                    state: {
+                        pedidoId: res.data.pedidoId,
+                        total: total.toFixed(2),
+                        productos: cart
+                    }
+                });
+                clearCart(); // 3. Vaciar el carrito
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Hubo un error al procesar tu pedido. Inténtalo de nuevo.");
+            });
     };
 
     if (cart.length === 0) {
@@ -42,6 +47,9 @@ function Carrito() {
             <div className="carrito-vacio">
                 <h2>Tu carrito está vacío 🛒</h2>
                 <p>¡Vuelve a la tienda para añadir productos oficiales!</p>
+                <button onClick={() => navigate('/tienda')} className="btn-volver" style={{ marginTop: '20px', padding: '10px 20px', cursor: 'pointer' }}>
+                    Ir a la Tienda
+                </button>
             </div>
         );
     }

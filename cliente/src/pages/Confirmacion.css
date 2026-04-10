@@ -1,0 +1,116 @@
+/* Confirmacion.css */
+
+.conf-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 20px;
+    background-color: #f8fafc;
+}
+
+.conf-card {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}
+
+.conf-icon {
+    font-size: 60px;
+    margin-bottom: 20px;
+    animation: scaleIn 0.5s ease-out;
+}
+
+.conf-card h1 {
+    color: #1e3a8a;
+    margin-bottom: 10px;
+}
+
+.conf-card p {
+    color: #64748b;
+    margin-bottom: 25px;
+}
+
+.conf-detalles {
+    background: #f1f5f9;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: left;
+    margin-bottom: 25px;
+}
+
+.conf-detalles p {
+    margin: 5px 0;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+
+.conf-productos {
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.conf-productos h3 {
+    font-size: 1rem;
+    color: #1e293b;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 10px;
+}
+
+.conf-productos ul {
+    list-style: none;
+    padding: 0;
+}
+
+.conf-productos li {
+    padding: 8px 0;
+    font-size: 0.9rem;
+    color: #475569;
+    border-bottom: 1px dashed #f1f5f9;
+}
+
+.conf-acciones {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.btn-perfil, .btn-tienda {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.btn-perfil {
+    background-color: #1e3a8a;
+    color: white;
+}
+
+.btn-tienda {
+    background-color: #e2e8f0;
+    color: #1e293b;
+}
+
+.btn-perfil:hover {
+    background-color: #172554;
+    transform: translateY(-2px);
+}
+
+.btn-tienda:hover {
+    background-color: #cbd5e1;
+    transform: translateY(-2px);
+}
+
+/* Animación simple para el icono */
+@keyframes scaleIn {
+    0% { transform: scale(0); }
+    80% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}

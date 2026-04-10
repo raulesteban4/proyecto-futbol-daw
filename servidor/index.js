@@ -35,10 +35,10 @@ app.post('/api/jugadores', (req, res) => {
 
     // 1. Primero comprobamos si el dorsal ya está ocupado
     const checkSql = "SELECT * FROM players WHERE dorsal = ? AND team_id = ?";
-    
+
     db.query(checkSql, [dorsal, team_id], (err, result) => {
         if (err) return res.status(500).json(err);
-        
+
         if (result.length > 0) {
             // Si ya hay un jugador con ese dorsal, enviamos un error
             return res.status(400).json({ message: `El dorsal ${dorsal} ya está ocupado.` });
@@ -69,10 +69,10 @@ app.put('/api/admin/jugadores/stats/:id', (req, res) => {
 
     // 1. Validar que el nuevo dorsal no lo tenga OTRA persona
     const checkDorsalSql = "SELECT * FROM players WHERE dorsal = ? AND id != ?";
-    
+
     db.query(checkDorsalSql, [dorsal, id], (err, result) => {
         if (err) return res.status(500).send(err);
-        
+
         if (result.length > 0) {
             return res.status(400).json({ message: `El dorsal ${dorsal} ya está siendo usado por otro jugador.` });
         }
@@ -108,12 +108,12 @@ app.post('/api/admin/productos', (req, res) => {
 
 // Obtener TODAS las ventas (para el admin)
 app.get('/api/admin/ventas', (req, res) => {
-        const sql = `
+    const sql = `
         SELECT o.*, u.email 
         FROM orders o 
         JOIN users u ON o.user_id = u.id 
         ORDER BY o.fecha DESC`;
-    
+
     db.query(sql, (err, result) => {
         if (err) return res.status(500).send(err);
         res.json(result);
@@ -125,7 +125,7 @@ app.put('/api/admin/ventas/:id', (req, res) => {
     const { id } = req.params;
     const { estado } = req.body;
     const sql = "UPDATE orders SET estado = ? WHERE id = ?";
-    
+
     db.query(sql, [estado, id], (err, result) => {
         if (err) return res.status(500).send(err);
         res.json({ message: "Estado actualizado" });
@@ -156,10 +156,10 @@ app.post('/api/registro', (req, res) => {
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
     const sql = "SELECT id, username, rol FROM users WHERE email = ? AND password = ?"; // Buscamos por email
-    
+
     db.query(sql, [email, password], (err, result) => {
         if (err) return res.status(500).send(err);
-        
+
         if (result.length > 0) {
             // Si las credenciales coinciden, devolvemos el usuario
             return res.json(result[0]);
@@ -175,7 +175,7 @@ app.post('/api/pedidos', (req, res) => {
 
     // 1. Insertamos el pedido principal
     const sqlOrder = "INSERT INTO orders (user_id, total) VALUES (?, ?)";
-    
+
     db.query(sqlOrder, [user_id, total], (err, result) => {
         if (err) {
             console.error("Error al crear pedido:", err);
@@ -193,10 +193,21 @@ app.post('/api/pedidos', (req, res) => {
                 console.error("Error al guardar detalles:", errItems);
                 return res.status(500).json({ error: "Error al guardar los detalles del pedido" });
             }
-            
-            res.status(200).json({ 
-                message: "Pedido completo guardado", 
-                pedidoId: pedidoId 
+
+            // 3. ACTUALIZACIÓN DE STOCK: Restamos la cantidad comprada de cada producto
+            // Recorremos el array de productos para actualizar la tabla 'products'
+            productos.forEach(item => {
+                const sqlUpdateStock = "UPDATE products SET stock = stock - ? WHERE id = ?";
+                db.query(sqlUpdateStock, [item.quantity, item.id], (errStock) => {
+                    if (errStock) {
+                        console.error(`Error actualizando stock del producto ${item.id}:`, errStock);
+                    }
+                });
+            });
+
+            res.status(200).json({
+                message: "Pedido completo guardado",
+                pedidoId: pedidoId
             });
         });
     });
@@ -206,7 +217,7 @@ app.post('/api/pedidos', (req, res) => {
 app.get('/api/pedidos/:user_id', (req, res) => {
     const { user_id } = req.params;
     const sql = "SELECT * FROM orders WHERE user_id = ? ORDER BY fecha DESC";
-    
+
     db.query(sql, [user_id], (err, result) => {
         if (err) return res.status(500).send(err);
         res.json(result);
@@ -221,7 +232,7 @@ app.get('/api/pedidos/detalles/:order_id', (req, res) => {
         FROM order_items oi 
         JOIN products p ON oi.product_id = p.id 
         WHERE oi.order_id = ?`;
-    
+
     db.query(sql, [order_id], (err, result) => {
         if (err) return res.status(500).send(err);
         res.json(result);
@@ -278,6 +289,34 @@ app.post('/api/admin/productos', (req, res) => {
     db.query(sql, [nombre, descripcion, precio, stock, categoria, imagen_url], (err, result) => {
         if (err) return res.status(500).send(err);
         res.json({ message: "Producto añadido", id: result.insertId });
+    });
+});
+
+app.put('/api/admin/productos/:id', (req, res) => {
+    const { id } = req.params;
+    const { nombre, descripcion, precio, stock, categoria, imagen_url } = req.body;
+    const sql = "UPDATE products SET nombre = ?, descripcion = ?, precio = ?, stock = ?, categoria = ?, imagen_url = ? WHERE id = ?";
+    
+    db.query(sql, [nombre, descripcion, precio, stock, categoria, imagen_url, id], (err, result) => {
+        if (err) {
+            console.error("Error al actualizar producto:", err);
+            return res.status(500).send(err);
+        }
+        res.json({ message: "Producto actualizado correctamente" });
+    });
+});
+
+// Eliminar un producto de la tienda
+app.delete('/api/admin/productos/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = "DELETE FROM products WHERE id = ?";
+    
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.error("Error al eliminar producto:", err);
+            return res.status(500).send(err);
+        }
+        res.json({ message: "Producto eliminado correctamente" });
     });
 });
 
