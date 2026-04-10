@@ -4,6 +4,9 @@ import axios from 'axios';
 function AdminDashboard() {
     const [tab, setTab] = useState('jugadores'); // Controla qué pestaña vemos
     const [data, setData] = useState([]);
+    const [stats, setStats] = useState({ totalRecaudado: 0, totalPedidos: 0, productoEstrella: 'N/A' });
+    const [soloPendientes, setSoloPendientes] = useState(false);
+
 
     // Cargar datos según la pestaña activa
     const cargarDatos = () => {
@@ -17,9 +20,18 @@ function AdminDashboard() {
         axios.get(url).then(res => setData(res.data));
     };
 
+    const cargarStats = () => {
+        axios.get('http://localhost:5000/api/admin/stats')
+            .then(res => setStats(res.data))
+            .catch(err => console.error("Error cargando stats:", err));
+    };
+
     useEffect(() => {
-        setData([]); // Limpiamos datos viejos antes de cargar los nuevos
+        setData([]);
         cargarDatos();
+        if (tab === 'ventas') {
+            cargarStats();
+        }
     }, [tab]);
 
     // Función para actualizar resultado de partido
@@ -307,7 +319,20 @@ function AdminDashboard() {
                                             <input id={`prod-pre-${p.id}`} type="number" step="0.01" defaultValue={p.precio} style={{ ...statInputStyle, width: '70px' }} />
                                         </td>
                                         <td style={{ textAlign: 'center' }}>
-                                            <input id={`prod-stk-${p.id}`} type="number" defaultValue={p.stock} style={{ ...statInputStyle, width: '60px', fontWeight: 'bold' }} />
+                                            <input
+                                                id={`prod-stk-${p.id}`}
+                                                type="number"
+                                                defaultValue={p.stock}
+                                                style={{
+                                                    ...statInputStyle,
+                                                    width: '60px',
+                                                    fontWeight: 'bold',
+                                                    // Si el stock es < 5, ponemos el texto en rojo y borde naranja
+                                                    color: p.stock < 5 ? '#ef4444' : '#1e293b',
+                                                    borderColor: p.stock < 5 ? '#f59e0b' : '#ddd'
+                                                }}
+                                            />
+                                            {p.stock < 5 && <div style={{ fontSize: '10px', color: '#ef4444' }}>¡Reponer!</div>}
                                         </td>
                                         <td style={{ textAlign: 'center' }}>
                                             <button onClick={() => actualizarProducto(p.id)} style={btnOkStyle}>Guardar</button>
@@ -322,67 +347,139 @@ function AdminDashboard() {
 
                 {tab === 'ventas' && (
                     data && data.length > 0 ? (
-                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                            <thead>
-                                <tr style={{ borderBottom: '2px solid #eee', backgroundColor: '#f9fafb' }}>
-                                    <th style={{ padding: '10px', textAlign: 'left' }}>ID</th>
-                                    <th>Cliente (Email)</th>
-                                    <th>Fecha</th>
-                                    <th>Total</th>
-                                    <th>Estado</th>
-                                    <th>Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {data.map(v => {
-                                    const estadoSeguro = v.estado ? v.estado.toLowerCase() : 'pendiente';
+                        <div>
+                            {/* Grid de 6 tarjetas de estadísticas */}
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(3, 1fr)',
+                                gap: '15px',
+                                marginBottom: '30px'
+                            }}>
+                                {/* 1. Recaudación */}
+                                <div style={cardStatStyle('#eff6ff', '#1e40af')}>
+                                    <span style={{ fontSize: '0.85rem' }}>Recaudación Total</span>
+                                    <h2 style={{ margin: '5px 0' }}>{stats.totalRecaudado || 0}€</h2>
+                                </div>
 
-                                    return (
-                                        <tr key={v.id} style={{ borderBottom: '1px solid #eee' }}>
-                                            <td style={{ padding: '10px' }}>#{v.id}</td>
-                                            <td style={{ textAlign: 'center' }}>{v.email}</td>
-                                            <td style={{ textAlign: 'center' }}>{new Date(v.fecha).toLocaleDateString()}</td>
-                                            <td style={{ textAlign: 'center', fontWeight: 'bold' }}>{v.total}€</td>
-                                            <td style={{ textAlign: 'center' }}>
-                                                <span style={{
-                                                    padding: '4px 8px',
-                                                    borderRadius: '12px',
-                                                    fontSize: '12px',
-                                                    backgroundColor: estadoSeguro === 'pendiente' ? '#fef3c7' : '#dcfce7',
-                                                    color: estadoSeguro === 'pendiente' ? '#92400e' : '#166534'
-                                                }}>
-                                                    {v.estado || 'Pendiente'}
-                                                </span>
-                                            </td>
-                                            <td style={{ textAlign: 'center' }}>
-                                                {estadoSeguro === 'pendiente' ? (
-                                                    <button
-                                                        onClick={() => {
-                                                            axios.put(`http://localhost:5000/api/admin/ventas/${v.id}`, { estado: 'Enviado' })
-                                                                .then(() => {
-                                                                    alert("¡Pedido marcado como enviado!");
-                                                                    cargarDatos();
-                                                                });
-                                                        }}
-                                                        style={btnOkStyle}
-                                                    >
-                                                        Marcar como Enviado
-                                                    </button>
-                                                ) : (
-                                                    <span style={{ color: '#666', fontSize: '12px' }}>Completado</span>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                                {/* 2. Producto Estrella */}
+                                <div style={cardStatStyle('#fff7ed', '#9a3412')}>
+                                    <span style={{ fontSize: '0.85rem' }}>Producto Estrella</span>
+                                    <h2 style={{ margin: '5px 0', fontSize: '1.1rem' }}>{stats.productoEstrella || '---'}</h2>
+                                </div>
+
+                                {/* 3. Stock Crítico */}
+                                <div style={cardStatStyle('#fef2f2', '#991b1b')}>
+                                    <span style={{ fontSize: '0.85rem' }}>Stock Bajo</span>
+                                    <h2 style={{ margin: '5px 0' }}>{stats.stockBajo || 0} producto</h2>
+                                </div>
+
+                                {/* 4. Enviados */}
+                                <div style={cardStatStyle('#f0fdf4', '#15803d')}>
+                                    <span style={{ fontSize: '0.85rem' }}>Enviados</span>
+                                    <h2 style={{ margin: '5px 0' }}>{stats.pedidosEnviados || 0}</h2>
+                                </div>
+
+                                {/* 5. Pendientes */}
+                                <div style={cardStatStyle('#fffbeb', '#b45309')}>
+                                    <span style={{ fontSize: '0.85rem' }}>Pendientes</span>
+                                    <h2 style={{ margin: '5px 0' }}>{stats.pedidosPendientes || 0}</h2>
+                                </div>
+
+                                {/* 6. Total de Pedidos */}
+                                <div style={cardStatStyle('#f8fafc', '#475569')}>
+                                    <span style={{ fontSize: '0.85rem' }}>Total Histórico</span>
+                                    <h2 style={{ margin: '5px 0' }}>{stats.totalPedidos || 0}</h2>
+                                </div>
+                            </div>
+
+                            {/*tabla de ventas */}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                <h3>Detalle de Transacciones</h3>
+                                <button
+                                    onClick={() => setSoloPendientes(!soloPendientes)}
+                                    style={{
+                                        padding: '8px 12px',
+                                        backgroundColor: soloPendientes ? 'rgb(223, 185, 86)' : '#d2d8e3',
+                                        color: soloPendientes ? 'white' : '#374151',
+                                        border: 'none',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: 'bold'
+                                    }}
+                                >
+                                    {soloPendientes ? 'Mostrar: Solo Pendientes' : 'Mostrar: Todos'}
+                                </button>
+                            </div>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr style={{ borderBottom: '2px solid #eee', backgroundColor: '#f9fafb' }}>
+                                        <th style={{ padding: '10px', textAlign: 'left' }}>ID</th>
+                                        <th>Cliente (Email)</th>
+                                        <th>Fecha</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data
+                                        .filter(v => {
+                                            // Si el filtro está activo, solo deja pasar los que NO sean 'enviado'
+                                            if (soloPendientes) {
+                                                return (v.estado || 'pendiente').toLowerCase() === 'pendiente';
+                                            }
+                                            return true;
+                                        })
+                                        .map(v => {
+                                            const estadoSeguro = v.estado ? v.estado.toLowerCase() : 'pendiente';
+                                            return (
+                                                <tr key={v.id} style={{ borderBottom: '1px solid #eee' }}>
+                                                    <td style={{ padding: '10px' }}>#{v.id}</td>
+                                                    <td style={{ textAlign: 'center' }}>{v.email}</td>
+                                                    <td style={{ textAlign: 'center' }}>{new Date(v.fecha).toLocaleDateString()}</td>
+                                                    <td style={{ textAlign: 'center', fontWeight: 'bold' }}>{v.total}€</td>
+                                                    <td style={{ textAlign: 'center' }}>
+                                                        <span style={{
+                                                            padding: '4px 8px',
+                                                            borderRadius: '12px',
+                                                            fontSize: '12px',
+                                                            backgroundColor: estadoSeguro === 'pendiente' ? '#fef3c7' : '#dcfce7',
+                                                            color: estadoSeguro === 'pendiente' ? '#92400e' : '#166534'
+                                                        }}>
+                                                            {v.estado || 'Pendiente'}
+                                                        </span>
+                                                    </td>
+                                                    <td style={{ textAlign: 'center' }}>
+                                                        {estadoSeguro === 'pendiente' ? (
+                                                            <button
+                                                                onClick={() => {
+                                                                    axios.put(`http://localhost:5000/api/admin/ventas/${v.id}`, { estado: 'Enviado' })
+                                                                        .then(() => {
+                                                                            alert("¡Pedido marcado como enviado!");
+                                                                            cargarDatos();
+                                                                            cargarStats();
+                                                                        });
+                                                                }}
+                                                                style={btnOkStyle}
+                                                            >
+                                                                Marcar como Enviado
+                                                            </button>
+                                                        ) : (
+                                                            <span style={{ color: '#666', fontSize: '12px' }}>Completado</span>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                </tbody>
+                            </table>
+                        </div>
                     ) : (
                         <p style={{ textAlign: 'center', padding: '20px' }}>No hay ventas registradas o cargando...</p>
                     )
                 )}
             </div>
-        </div>
+        </div >
     );
 }
 
@@ -431,6 +528,16 @@ const statInputStyle = {
     border: '1px solid #ddd',
     margin: '0 2px'
 };
+
+const cardStatStyle = (bgColor, textColor) => ({
+    backgroundColor: bgColor,
+    color: textColor,
+    padding: '20px',
+    borderRadius: '12px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+    textAlign: 'center',
+    border: `1px solid ${textColor}20`
+});
 
 
 export default AdminDashboard;

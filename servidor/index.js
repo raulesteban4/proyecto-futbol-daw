@@ -96,16 +96,6 @@ app.get('/api/productos', (req, res) => {
     });
 });
 
-// Añadir nuevo producto
-app.post('/api/admin/productos', (req, res) => {
-    const { nombre, descripcion, precio, stock, categoria, imagen_url } = req.body;
-    const sql = "INSERT INTO products (nombre, descripcion, precio, stock, categoria, imagen_url) VALUES (?, ?, ?, ?, ?, ?)";
-    db.query(sql, [nombre, descripcion, precio, stock, categoria, imagen_url], (err, result) => {
-        if (err) return res.status(500).send(err);
-        res.json({ message: "Producto añadido", id: result.insertId });
-    });
-});
-
 // Obtener TODAS las ventas (para el admin)
 app.get('/api/admin/ventas', (req, res) => {
     const sql = `
@@ -317,6 +307,27 @@ app.delete('/api/admin/productos/:id', (req, res) => {
             return res.status(500).send(err);
         }
         res.json({ message: "Producto eliminado correctamente" });
+    });
+});
+
+// OBTENER ESTADÍSTICAS PARA EL DASHBOARD
+app.get('/api/admin/stats', (req, res) => {
+    const sql = `
+        SELECT 
+            (SELECT SUM(total) FROM orders) as totalRecaudado,
+            (SELECT COUNT(*) FROM orders) as totalPedidos,
+            (SELECT COUNT(*) FROM products WHERE stock < 5) as stockBajo,
+            (SELECT COUNT(*) FROM orders WHERE LOWER(estado) = 'pendiente' OR estado IS NULL) as pedidosPendientes,
+            (SELECT COUNT(*) FROM orders WHERE LOWER(estado) = 'enviado') as pedidosEnviados,
+            (SELECT p.nombre FROM order_items oi 
+             JOIN products p ON oi.product_id = p.id 
+             GROUP BY oi.product_id 
+             ORDER BY SUM(oi.cantidad) DESC LIMIT 1) as productoEstrella
+    `;
+
+    db.query(sql, (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.json(result[0]);
     });
 });
 
