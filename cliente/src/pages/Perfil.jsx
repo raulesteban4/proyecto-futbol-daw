@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
 
@@ -62,7 +62,7 @@ function Perfil() {
                     </thead>
                     <tbody>
                         {pedidos.map(p => (
-                            <div key={p.id} style={{ display: 'contents' }}>
+                            <Fragment key={p.id}>
                                 <tr style={{ borderBottom: '1px solid #eee' }}>
                                     <td style={{ padding: '12px' }}>#{p.id}</td>
                                     <td style={{ padding: '12px' }}>{new Date(p.fecha).toLocaleDateString()}</td>
@@ -101,7 +101,7 @@ function Perfil() {
                                         </td>
                                     </tr>
                                 )}
-                            </div>
+                            </Fragment>
                         ))}
                     </tbody>
                 </table>
