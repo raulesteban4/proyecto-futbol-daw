@@ -5,11 +5,14 @@ function AdminDashboard() {
     const [tab, setTab] = useState('jugadores'); // Controla qué pestaña vemos
     const [data, setData] = useState([]);
     const [stats, setStats] = useState({ totalRecaudado: 0, totalPedidos: 0, productoEstrella: 'N/A' });
+    const [busqueda, setBusqueda] = useState('');
     const [soloPendientes, setSoloPendientes] = useState(false);
+
 
 
     // Cargar datos según la pestaña activa
     const cargarDatos = () => {
+        const token = localStorage.getItem('token_fc_canaveral');
         let url = '';
         if (tab === 'jugadores') url = 'http://localhost:5000/api/jugadores';
         if (tab === 'partidos') url = 'http://localhost:5000/api/partidos';
@@ -17,11 +20,31 @@ function AdminDashboard() {
         if (tab === 'tienda') url = 'http://localhost:5000/api/productos';
         if (tab === 'ventas') url = 'http://localhost:5000/api/admin/ventas';
 
-        axios.get(url).then(res => setData(res.data));
+        axios.get(url, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(res => {
+                setData(res.data);
+            })
+            .catch(err => {
+                console.error("Error al cargar datos:", err);
+                if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+                    alert("Tu sesión ha caducado o no tienes permisos de administrador.");
+                    navigate('/login');
+                }
+            });
     };
 
     const cargarStats = () => {
-        axios.get('http://localhost:5000/api/admin/stats')
+        const token = localStorage.getItem('token_fc_canaveral'); // 1. Recuperar token
+
+        axios.get('http://localhost:5000/api/admin/stats', {
+            headers: {
+                'Authorization': `Bearer ${token}` // 2. Enviarlo en el header
+            }
+        })
             .then(res => setStats(res.data))
             .catch(err => console.error("Error cargando stats:", err));
     };
@@ -36,10 +59,15 @@ function AdminDashboard() {
 
     // Función para actualizar resultado de partido
     const guardarResultado = (id, gL, gV) => {
+        const token = localStorage.getItem('token_fc_canaveral');
         axios.put(`http://localhost:5000/api/admin/partidos/${id}`, {
             goles_local: gL,
             goles_visitante: gV,
             jugado: true
+        }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         }).then(() => {
             alert("Resultado guardado");
             cargarDatos();
@@ -48,6 +76,7 @@ function AdminDashboard() {
 
     // --- FUNCIONES DE TIENDA ---
     const actualizarProducto = (id) => {
+        const token = localStorage.getItem('token_fc_canaveral');
         const actualizado = {
             nombre: document.getElementById(`prod-nom-${id}`).value,
             precio: document.getElementById(`prod-pre-${id}`).value,
@@ -57,7 +86,11 @@ function AdminDashboard() {
             imagen_url: document.getElementById(`prod-img-${id}`).value
         };
 
-        axios.put(`http://localhost:5000/api/admin/productos/${id}`, actualizado)
+        axios.put(`http://localhost:5000/api/admin/productos/${id}`, actualizado, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then(() => {
                 alert("Producto actualizado con éxito");
                 cargarDatos();
@@ -67,7 +100,12 @@ function AdminDashboard() {
 
     const eliminarProducto = (id) => {
         if (window.confirm("¿Seguro que quieres eliminar este producto?")) {
-            axios.delete(`http://localhost:5000/api/admin/productos/${id}`)
+            const token = localStorage.getItem('token_fc_canaveral');
+            axios.delete(`http://localhost:5000/api/admin/productos/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
                 .then(() => {
                     alert("Producto eliminado");
                     cargarDatos();
@@ -130,6 +168,7 @@ function AdminDashboard() {
                         <h3>Fichar Nuevo Jugador</h3>
                         <form onSubmit={(e) => {
                             e.preventDefault();
+                            const token = localStorage.getItem('token_fc_canaveral');
                             const nuevo = {
                                 nombre: e.target.nombre.value,
                                 posicion: e.target.posicion.value,
@@ -137,7 +176,11 @@ function AdminDashboard() {
                                 team_id: 1
                             };
 
-                            axios.post('http://localhost:5000/api/jugadores', nuevo)
+                            axios.post('http://localhost:5000/api/jugadores', nuevo, {
+                                headers: {
+                                    'Authorization': `Bearer ${token}`
+                                }
+                            })
                                 .then(() => {
                                     alert("¡Jugador fichado con éxito!");
                                     e.target.reset();
@@ -202,6 +245,7 @@ function AdminDashboard() {
                                         </td>
                                         <td style={{ textAlign: 'center' }}>
                                             <button onClick={() => {
+                                                const token = localStorage.getItem('token_fc_canaveral');
                                                 const datosActualizados = {
                                                     dorsal: document.getElementById(`dor-${j.id}`).value, // Capturamos el nuevo dorsal
                                                     goles: document.getElementById(`gol-${j.id}`).value,
@@ -209,7 +253,11 @@ function AdminDashboard() {
                                                     amarillas: document.getElementById(`am-${j.id}`).value,
                                                     rojas: document.getElementById(`rj-${j.id}`).value
                                                 };
-                                                axios.put(`http://localhost:5000/api/admin/jugadores/stats/${j.id}`, datosActualizados)
+                                                axios.put(`http://localhost:5000/api/admin/jugadores/stats/${j.id}`, datosActualizados, {
+                                                    headers: {
+                                                        'Authorization': `Bearer ${token}`
+                                                    }
+                                                })
                                                     .then(() => {
                                                         alert("Datos y dorsal actualizados");
                                                         cargarDatos();
@@ -224,7 +272,12 @@ function AdminDashboard() {
                                             }} style={btnOkStyle}>Actualizar</button>
                                             <button onClick={() => {
                                                 if (window.confirm("¿Dar de baja?")) {
-                                                    axios.delete(`http://localhost:5000/api/jugadores/${j.id}`).then(() => cargarDatos());
+                                                    const token = localStorage.getItem('token_fc_canaveral');
+                                                    axios.delete(`http://localhost:5000/api/jugadores/${j.id}`, {
+                                                        headers: {
+                                                            'Authorization': `Bearer ${token}`
+                                                        }
+                                                    }).then(() => cargarDatos());
                                                 }
                                             }} style={{ ...btnDelStyle, marginLeft: '5px' }}>Eliminar</button>
                                         </td>
@@ -255,10 +308,15 @@ function AdminDashboard() {
                                     <td style={{ textAlign: 'center' }}><input id={`pos-${e.id}`} defaultValue={e.posicion} style={{ width: '40px' }} /></td>
                                     <td style={{ textAlign: 'center' }}>
                                         <button onClick={() => {
+                                            const token = localStorage.getItem('token_fc_canaveral');
                                             const pj = document.getElementById(`pj-${e.id}`).value;
                                             const pts = document.getElementById(`pts-${e.id}`).value;
                                             const pos = document.getElementById(`pos-${e.id}`).value;
-                                            axios.put(`http://localhost:5000/api/admin/ranking/${e.id}`, { pj, puntos: pts, posicion: pos })
+                                            axios.put(`http://localhost:5000/api/admin/ranking/${e.id}`, { pj, puntos: pts, posicion: pos }, {
+                                                headers: {
+                                                    'Authorization': `Bearer ${token}`
+                                                }
+                                            })
                                                 .then(() => alert("Ranking actualizado"));
                                         }} style={btnOkStyle}>Guardar</button>
                                     </td>
@@ -273,6 +331,7 @@ function AdminDashboard() {
                         <h3>Añadir Nuevo Producto</h3>
                         <form onSubmit={(e) => {
                             e.preventDefault();
+                            const token = localStorage.getItem('token_fc_canaveral');
                             const producto = {
                                 nombre: e.target.nombre.value,
                                 precio: e.target.precio.value,
@@ -281,7 +340,11 @@ function AdminDashboard() {
                                 descripcion: e.target.descripcion.value,
                                 imagen_url: e.target.imagen.value || 'https://via.placeholder.com/150'
                             };
-                            axios.post('http://localhost:5000/api/admin/productos', producto).then(() => {
+                            axios.post('http://localhost:5000/api/admin/productos', producto, {
+                                headers: {
+                                    'Authorization': `Bearer ${token}`
+                                }
+                            }).then(() => {
                                 alert("Producto añadido");
                                 e.target.reset();
                                 cargarDatos();
@@ -393,23 +456,41 @@ function AdminDashboard() {
                             </div>
 
                             {/*tabla de ventas */}
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', gap: '15px' }}>
                                 <h3>Detalle de Transacciones</h3>
-                                <button
-                                    onClick={() => setSoloPendientes(!soloPendientes)}
-                                    style={{
-                                        padding: '8px 12px',
-                                        backgroundColor: soloPendientes ? 'rgb(223, 185, 86)' : '#d2d8e3',
-                                        color: soloPendientes ? 'white' : '#374151',
-                                        border: 'none',
-                                        borderRadius: '6px',
-                                        cursor: 'pointer',
-                                        fontWeight: 'bold'
-                                    }}
-                                >
-                                    {soloPendientes ? 'Mostrar: Solo Pendientes' : 'Mostrar: Todos'}
-                                </button>
+
+                                <div style={{ display: 'flex', gap: '10px', flex: 1, justifyContent: 'flex-end' }}>
+                                    {/* BUSCADOR POR EMAIL O ID */}
+                                    <input
+                                        type="text"
+                                        placeholder="Buscar por Email o ID..."
+                                        value={busqueda}
+                                        onChange={(e) => setBusqueda(e.target.value)}
+                                        style={{
+                                            padding: '8px 12px',
+                                            borderRadius: '6px',
+                                            border: '1px solid #cbd5e1',
+                                            width: '250px'
+                                        }}
+                                    />
+
+                                    <button
+                                        onClick={() => setSoloPendientes(!soloPendientes)}
+                                        style={{
+                                            padding: '8px 12px',
+                                            backgroundColor: soloPendientes ? 'rgb(223, 185, 86)' : '#d2d8e3',
+                                            color: soloPendientes ? 'white' : '#374151',
+                                            border: 'none',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontWeight: 'bold'
+                                        }}
+                                    >
+                                        {soloPendientes ? 'Mostrar: Solo Pendientes' : 'Mostrar: Todos'}
+                                    </button>
+                                </div>
                             </div>
+
                             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                 <thead>
                                     <tr style={{ borderBottom: '2px solid #eee', backgroundColor: '#f9fafb' }}>
@@ -424,11 +505,18 @@ function AdminDashboard() {
                                 <tbody>
                                     {data
                                         .filter(v => {
-                                            // Si el filtro está activo, solo deja pasar los que NO sean 'enviado'
-                                            if (soloPendientes) {
-                                                return (v.estado || 'pendiente').toLowerCase() === 'pendiente';
-                                            }
-                                            return true;
+                                            // Filtro 1: Solo pendientes (si está activo)
+                                            const cumpleEstado = soloPendientes
+                                                ? (v.estado || 'pendiente').toLowerCase() === 'pendiente'
+                                                : true;
+
+                                            // Filtro 2: Buscador por Email o ID
+                                            const termino = busqueda.toLowerCase();
+                                            const cumpleBusqueda =
+                                                (v.email || '').toLowerCase().includes(termino) ||
+                                                (v.id || '').toString().includes(termino);
+
+                                            return cumpleEstado && cumpleBusqueda;
                                         })
                                         .map(v => {
                                             const estadoSeguro = v.estado ? v.estado.toLowerCase() : 'pendiente';
@@ -453,7 +541,12 @@ function AdminDashboard() {
                                                         {estadoSeguro === 'pendiente' ? (
                                                             <button
                                                                 onClick={() => {
-                                                                    axios.put(`http://localhost:5000/api/admin/ventas/${v.id}`, { estado: 'Enviado' })
+                                                                    const token = localStorage.getItem('token_fc_canaveral');
+                                                                    axios.put(`http://localhost:5000/api/admin/ventas/${v.id}`, { estado: 'Enviado' }, {
+                                                                        headers: {
+                                                                            'Authorization': `Bearer ${token}`
+                                                                        }
+                                                                    })
                                                                         .then(() => {
                                                                             alert("¡Pedido marcado como enviado!");
                                                                             cargarDatos();

@@ -7,7 +7,12 @@ function Plantilla() {
   const [nuevo, setNuevo] = useState({ nombre: '', posicion: '', dorsal: '', team_id: 1 });
 
   const obtenerJugadores = () => {
-    axios.get('http://localhost:5000/api/jugadores')
+    const token = localStorage.getItem('token_fc_canaveral');
+    axios.get('http://localhost:5000/api/jugadores', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(res => setJugadores(res.data))
       .catch(err => console.error("Error al obtener:", err));
   };
@@ -16,7 +21,12 @@ function Plantilla() {
 
   const fichar = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:5000/api/jugadores', nuevo)
+    const token = localStorage.getItem('token_fc_canaveral');
+    axios.post('http://localhost:5000/api/jugadores', nuevo, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(() => {
         obtenerJugadores();
         setNuevo({ nombre: '', posicion: '', dorsal: '', team_id: 1 });
@@ -25,7 +35,12 @@ function Plantilla() {
 
   const eliminar = (id) => {
     if (window.confirm("¿Eliminar ficha?")) {
-      axios.delete(`http://localhost:5000/api/jugadores/${id}`).then(() => obtenerJugadores());
+      const token = localStorage.getItem('token_fc_canaveral');
+      axios.delete(`http://localhost:5000/api/jugadores/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }).then(() => obtenerJugadores());
     }
   };
 

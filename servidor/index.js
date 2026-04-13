@@ -1,6 +1,9 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = "f8a2_!99_DsK2l-02mZ_QpX92_#canaveral_secure_2026";
+
 
 const app = express();
 app.use(cors());
@@ -12,6 +15,8 @@ const db = mysql.createConnection({
     password: 'Raul@3306',
     database: 'proyecto_futbol'
 });
+
+const verificarToken = require('./auth.js'); // Importa archivo token.
 
 db.connect(err => {
     if (err) {
@@ -30,7 +35,7 @@ app.get('/api/jugadores', (req, res) => {
 });
 
 // Para añadir jugadores
-app.post('/api/jugadores', (req, res) => {
+app.post('/api/jugadores', verificarToken, (req, res) => {
     const { nombre, posicion, dorsal, team_id } = req.body;
 
     // 1. Primero comprobamos si el dorsal ya está ocupado
@@ -54,7 +59,7 @@ app.post('/api/jugadores', (req, res) => {
 });
 
 // Eliminar jugadores
-app.delete('/api/jugadores/:id', (req, res) => {
+app.delete('/api/jugadores/:id', verificarToken, (req, res) => {
     const { id } = req.params;
     db.query("DELETE FROM players WHERE id = ?", [id], (err, result) => {
         if (err) return res.status(500).send(err);
@@ -63,7 +68,7 @@ app.delete('/api/jugadores/:id', (req, res) => {
 });
 
 // Actualizar stats y dorsal jugadores.
-app.put('/api/admin/jugadores/stats/:id', (req, res) => {
+app.put('/api/admin/jugadores/stats/:id', verificarToken, (req, res) => {
     const { id } = req.params;
     const { dorsal, goles, asistencias, amarillas, rojas } = req.body;
 
@@ -97,7 +102,7 @@ app.get('/api/productos', (req, res) => {
 });
 
 // Obtener TODAS las ventas (para el admin)
-app.get('/api/admin/ventas', (req, res) => {
+app.get('/api/admin/ventas', verificarToken, (req, res) => {
     const sql = `
         SELECT o.*, u.email 
         FROM orders o 
@@ -111,7 +116,7 @@ app.get('/api/admin/ventas', (req, res) => {
 });
 
 // Cambiar estado del pedido
-app.put('/api/admin/ventas/:id', (req, res) => {
+app.put('/api/admin/ventas/:id', verificarToken, (req, res) => {
     const { id } = req.params;
     const { estado } = req.body;
     const sql = "UPDATE orders SET estado = ? WHERE id = ?";
@@ -145,22 +150,34 @@ app.post('/api/registro', (req, res) => {
 // Login de usuario
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
-    const sql = "SELECT id, username, rol FROM users WHERE email = ? AND password = ?"; // Buscamos por email
+    const sql = "SELECT id, username, rol FROM users WHERE email = ? AND password = ?";
 
     db.query(sql, [email, password], (err, result) => {
         if (err) return res.status(500).send(err);
 
         if (result.length > 0) {
-            // Si las credenciales coinciden, devolvemos el usuario
-            return res.json(result[0]);
+            const user = result[0];
+
+            // CREAR EL TOKEN: Guardamos el ID y el ROL dentro
+            const token = jwt.sign(
+                { id: user.id, rol: user.rol }, 
+                SECRET_KEY, 
+                { expiresIn: '2h' } // Caduca automáticamente en 2 horas
+            );
+
+            // Enviamos el pack completo al frontend
+            return res.json({
+                user: user,
+                token: token
+            });
         } else {
-            // Si no hay coincidencias (email o pass incorrectos)
             return res.status(401).send("Correo o contraseña incorrectos");
         }
     });
 });
+
 // RECIBIR PEDIDOS
-app.post('/api/pedidos', (req, res) => {
+app.post('/api/pedidos', verificarToken,  (req, res) => {
     const { user_id, total, productos } = req.body;
 
     // 1. Insertamos el pedido principal
@@ -204,7 +221,7 @@ app.post('/api/pedidos', (req, res) => {
 });
 
 // Lista de compras por usuario
-app.get('/api/pedidos/:user_id', (req, res) => {
+app.get('/api/pedidos/:user_id', verificarToken, (req, res) => {
     const { user_id } = req.params;
     const sql = "SELECT * FROM orders WHERE user_id = ? ORDER BY fecha DESC";
 
@@ -215,7 +232,7 @@ app.get('/api/pedidos/:user_id', (req, res) => {
 });
 
 // Devuelve los nombres de los productos y sus cantidades.
-app.get('/api/pedidos/detalles/:order_id', (req, res) => {
+app.get('/api/pedidos/detalles/:order_id', verificarToken, (req, res) => {
     const { order_id } = req.params;
     const sql = `
         SELECT oi.*, p.nombre 
@@ -249,7 +266,7 @@ app.get('/api/partidos', (req, res) => {
 
 // --- GESTIÓN DE PARTIDOS ---
 // Actualizar resultado de un partido
-app.put('/api/admin/partidos/:id', (req, res) => {
+app.put('/api/admin/partidos/:id', verificarToken, (req, res) => {
     const { id } = req.params;
     const { goles_local, goles_visitante, jugado } = req.body;
     const sql = "UPDATE matches SET goles_local = ?, goles_visitante = ?, jugado = ? WHERE id = ?";
@@ -261,7 +278,7 @@ app.put('/api/admin/partidos/:id', (req, res) => {
 
 // --- GESTIÓN DE CLASIFICACIÓN ---
 // Actualizar puntos de un equipo
-app.put('/api/admin/ranking/:id', (req, res) => {
+app.put('/api/admin/ranking/:id', verificarToken, (req, res) => {
     const { id } = req.params;
     const { pj, puntos, posicion } = req.body;
     const sql = "UPDATE ranking SET pj = ?, puntos = ?, posicion = ? WHERE id = ?";
@@ -273,7 +290,7 @@ app.put('/api/admin/ranking/:id', (req, res) => {
 
 // --- GESTIÓN DE PRODUCTOS (Tienda) ---
 // Añadir nuevo producto
-app.post('/api/admin/productos', (req, res) => {
+app.post('/api/admin/productos', verificarToken, (req, res) => {
     const { nombre, descripcion, precio, stock, categoria, imagen_url } = req.body;
     const sql = "INSERT INTO products (nombre, descripcion, precio, stock, categoria, imagen_url) VALUES (?, ?, ?, ?, ?, ?)";
     db.query(sql, [nombre, descripcion, precio, stock, categoria, imagen_url], (err, result) => {
@@ -282,7 +299,7 @@ app.post('/api/admin/productos', (req, res) => {
     });
 });
 
-app.put('/api/admin/productos/:id', (req, res) => {
+app.put('/api/admin/productos/:id', verificarToken, (req, res) => {
     const { id } = req.params;
     const { nombre, descripcion, precio, stock, categoria, imagen_url } = req.body;
     const sql = "UPDATE products SET nombre = ?, descripcion = ?, precio = ?, stock = ?, categoria = ?, imagen_url = ? WHERE id = ?";
@@ -297,7 +314,7 @@ app.put('/api/admin/productos/:id', (req, res) => {
 });
 
 // Eliminar un producto de la tienda
-app.delete('/api/admin/productos/:id', (req, res) => {
+app.delete('/api/admin/productos/:id', verificarToken, (req, res) => {
     const { id } = req.params;
     const sql = "DELETE FROM products WHERE id = ?";
     
@@ -311,7 +328,7 @@ app.delete('/api/admin/productos/:id', (req, res) => {
 });
 
 // OBTENER ESTADÍSTICAS PARA EL DASHBOARD
-app.get('/api/admin/stats', (req, res) => {
+app.get('/api/admin/stats',  verificarToken, (req, res) => {
     const sql = `
         SELECT 
             (SELECT SUM(total) FROM orders) as totalRecaudado,

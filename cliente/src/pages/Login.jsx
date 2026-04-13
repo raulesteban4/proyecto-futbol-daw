@@ -11,15 +11,32 @@ function Login() {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        // Llamamos a la API que creamos antes en el servidor
+        // Llamamos a la API
         axios.post('http://localhost:5000/api/login', { email, password })
             .then(res => {
-                login(res.data); // Guardamos los datos (nombre, rol, id...)
-                alert(`¡Bienvenido de nuevo, ${res.data.username}!`);
-                navigate('/'); // Nos lleva al inicio automáticamente
+                const { user, token } = res.data;
+
+                // 1. Guardamos el token en localStorage
+                localStorage.setItem('token_fc_canaveral', token);
+
+                // 2. Ejecutamos la función login pasando solo los datos del usuario
+                login(user); 
+
+                alert(`¡Bienvenido de nuevo, ${user.username}!`);
+                
+                // 3. Redirección: si es admin, al dashboard.
+                if (user.rol === 'admin') {
+                    navigate('/admin');
+                } else {
+                    navigate('/');
+                }
             })
             .catch(err => {
-                alert("Email o contraseña incorrectos");
+                if (err.response && err.response.status === 401) {
+                    alert("Correo o contraseña incorrectos");
+                } else {
+                    alert("Error al conectar con el servidor");
+                }
                 console.error(err);
             });
     };

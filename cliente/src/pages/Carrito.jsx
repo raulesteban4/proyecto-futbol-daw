@@ -20,11 +20,17 @@ function Carrito() {
             return;
         }
 
+        const token = localStorage.getItem('token_fc_canaveral');
+
         // 2. Enviar el pedido al servidor (Backend)
         axios.post('http://localhost:5000/api/pedidos', {
             user_id: user.id,
             total: total.toFixed(2),
             productos: cart // <--- Enviamos todo el array de productos
+        }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         })
             .then(res => {
                 navigate('/confirmacion', {

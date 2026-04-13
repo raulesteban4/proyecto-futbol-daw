@@ -14,11 +14,17 @@ export const UserProvider = ({ children }) => {
             localStorage.setItem('user_fc_canaveral', JSON.stringify(user));
         } else {
             localStorage.removeItem('user_fc_canaveral');
+            localStorage.removeItem('token_fc_canaveral');
         }
     }, [user]);
 
     const login = (userData) => setUser(userData);
-    const logout = () => setUser(null);
+    
+    const logout = () => {
+        setUser(null);
+        localStorage.removeItem('user_fc_canaveral');
+        localStorage.removeItem('token_fc_canaveral');
+    };
 
     return (
         <UserContext.Provider value={{ user, login, logout }}>

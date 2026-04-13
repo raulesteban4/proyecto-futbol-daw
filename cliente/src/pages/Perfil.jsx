@@ -9,7 +9,12 @@ function Perfil() {
 
     useEffect(() => {
         if (user && user.id) {
-            axios.get(`http://localhost:5000/api/pedidos/${user.id}`)
+            const token = localStorage.getItem('token_fc_canaveral');
+            axios.get(`http://localhost:5000/api/pedidos/${user.id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
                 .then(res => setPedidos(res.data))
                 .catch(err => console.error(err));
         }
@@ -21,7 +26,12 @@ function Perfil() {
             setDetallesVisibles({ ...detallesVisibles, [orderId]: null });
         } else {
             // Si no, los pedimos al servidor
-            axios.get(`http://localhost:5000/api/pedidos/detalles/${orderId}`)
+            const token = localStorage.getItem('token_fc_canaveral');
+            axios.get(`http://localhost:5000/api/pedidos/detalles/${orderId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
                 .then(res => {
                     setDetallesVisibles({ ...detallesVisibles, [orderId]: res.data });
                 })
