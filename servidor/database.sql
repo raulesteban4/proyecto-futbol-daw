@@ -107,8 +107,29 @@ INSERT INTO products (nombre, descripcion, precio, stock, categoria) VALUES
 
 INSERT INTO users (username, password, email, rol) VALUES ('Raul', '1234', 'raul@test.com', 'admin');
 
--- Datos para que la tabla de clasificación no esté vacía
-INSERT INTO ranking (equipo, pj, puntos, posicion) VALUES 
-('FC Cañaveral', 10, 25, 1),
-('Rival FC', 10, 22, 2),
-('Barrio Unido', 10, 18, 3);
+-- Datos para que la tabla de clasificación
+INSERT INTO ranking (equipo, pj, puntos, posicion) VALUES
+('FC Cañaveral', 3, 9, 1),
+('CD Móstoles', 3, 7, 2),
+('Rayo Alcorcón', 3, 6, 3),
+('Getafe City', 3, 4, 4),
+('Leganés B', 3, 4, 5),
+('Alcorcón Academy', 3, 3, 6),
+('Fuenlabrada Promesas', 3, 3, 7),
+('Real Aranjuez', 3, 2, 8),
+('Inter Valdemoro', 3, 1, 9),
+('Atlético Sur', 3, 0, 10);
+
+INSERT INTO matches (rival, fecha, ubicacion, goles_local, goles_visitante, jugado) VALUES 
+-- Partidos ya jugados
+('Rayo Alcorcón', '2024-03-15 10:30:00', 'Polideportivo Cañaveral', 2, 0, TRUE),
+('Inter Valdemoro', '2024-03-22 11:00:00', 'Estadio Valdemoro', 3, 1, TRUE),
+('Atlético Sur', '2024-03-29 09:45:00', 'Polideportivo Cañaveral', 4, 1, TRUE),
+
+-- Próximos partidos
+('CD Móstoles', '2024-04-20 12:00:00', 'Polideportivo Cañaveral', 0, 0, FALSE),
+('Leganés B', '2024-04-27 10:00:00', 'Anexo Butarque', 0, 0, FALSE),
+('Getafe City', '2024-05-04 11:30:00', 'Polideportivo Cañaveral', 0, 0, FALSE),
+('Fuenlabrada Promesas', '2024-05-11 16:00:00', 'Ciudad Deportiva Fuenlabrada', 0, 0, FALSE),
+('Alcorcón Academy', '2024-05-18 10:30:00', 'Polideportivo Cañaveral', 0, 0, FALSE),
+('Real Aranjuez', '2024-05-25 18:00:00', 'Estadio El Deleite', 0, 0, FALSE),
