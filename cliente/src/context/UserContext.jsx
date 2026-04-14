@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 const UserContext = createContext();
 
@@ -24,7 +25,26 @@ export const UserProvider = ({ children }) => {
         setUser(null);
         localStorage.removeItem('user_fc_canaveral');
         localStorage.removeItem('token_fc_canaveral');
+        window.location.href = '/login';
     };
+
+    // INTERCEPTOR DE SESIÓN CADUCADA
+    useEffect(() => {
+        const interceptor = axios.interceptors.response.use(
+            (response) => response,
+            (error) => {
+                // Si el servidor responde 401 (Unauthorized)
+                if (error.response && error.response.status === 401) {
+                    alert("Tu sesión ha caducado. Por favor, identifícate de nuevo.");
+                    logout();
+                }
+                return Promise.reject(error);
+            }
+        );
+
+        // Limpieza del interceptor al desmontar el componente
+        return () => axios.interceptors.response.eject(interceptor);
+    }, []);
 
     return (
         <UserContext.Provider value={{ user, login, logout }}>

@@ -162,7 +162,7 @@ app.post('/api/login', (req, res) => {
             const token = jwt.sign(
                 { id: user.id, rol: user.rol }, 
                 SECRET_KEY, 
-                { expiresIn: '2h' } // Caduca automáticamente en 2 horas
+                { expiresIn: '30m' } // Caduca automáticamente en 30 minutos
             );
 
             // Enviamos el pack completo al frontend
@@ -268,23 +268,97 @@ app.get('/api/partidos', (req, res) => {
 // Actualizar resultado de un partido
 app.put('/api/admin/partidos/:id', verificarToken, (req, res) => {
     const { id } = req.params;
-    const { goles_local, goles_visitante, jugado } = req.body;
-    const sql = "UPDATE matches SET goles_local = ?, goles_visitante = ?, jugado = ? WHERE id = ?";
-    db.query(sql, [goles_local, goles_visitante, jugado, id], (err, result) => {
-        if (err) return res.status(500).send(err);
-        res.json({ message: "Partido actualizado" });
+    const { rival, fecha, ubicacion, goles_local, goles_visitante, jugado } = req.body;
+    
+    // Añadimos rival, fecha y ubicacion a la consulta UPDATE
+    const sql = `
+        UPDATE matches 
+        SET rival = ?, fecha = ?, ubicacion = ?, goles_local = ?, goles_visitante = ?, jugado = ? 
+        WHERE id = ?
+    `;
+    
+    db.query(sql, [rival, fecha, ubicacion, goles_local, goles_visitante, jugado, id], (err, result) => {
+        if (err) {
+            console.error("Error al actualizar partido:", err);
+            return res.status(500).send(err);
+        }
+        res.json({ message: "Partido actualizado correctamente" });
+    });
+});
+
+// Crear nuevo partido
+app.post('/api/admin/partidos', verificarToken, (req, res) => {
+    const { rival, fecha, ubicacion, goles_local, goles_visitante, jugado } = req.body;
+    
+    // Añadimos el campo ubicacion a la consulta INSERT
+    const sql = `
+        INSERT INTO matches (rival, fecha, ubicacion, goles_local, goles_visitante, jugado) 
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+    
+    db.query(sql, [rival, fecha, ubicacion, goles_local || 0, goles_visitante || 0, jugado || false], (err, result) => {
+        if (err) {
+            console.error("Error al insertar partido:", err);
+            return res.status(500).send(err);
+        }
+        res.json({ message: "Partido añadido", id: result.insertId });
+    });
+});
+
+// Eliminar partido
+app.delete('/api/admin/partidos/:id', verificarToken, (req, res) => {
+    const { id } = req.params;
+    db.query("DELETE FROM matches WHERE id = ?", [id], (err, result) => {
+        if (err) {
+            console.error("Error al eliminar partido:", err);
+            return res.status(500).send(err);
+        }
+        res.json({ message: "Partido eliminado con éxito" });
     });
 });
 
 // --- GESTIÓN DE CLASIFICACIÓN ---
-// Actualizar puntos de un equipo
+// Actualizar equipo (Nombre, PJ, Puntos y Posición)
 app.put('/api/admin/ranking/:id', verificarToken, (req, res) => {
     const { id } = req.params;
-    const { pj, puntos, posicion } = req.body;
-    const sql = "UPDATE ranking SET pj = ?, puntos = ?, posicion = ? WHERE id = ?";
-    db.query(sql, [pj, puntos, posicion, id], (err, result) => {
-        if (err) return res.status(500).send(err);
-        res.json({ message: "Ranking actualizado" });
+    // Añadimos "equipo" al destructuring para poder cambiar el nombre
+    const { equipo, pj, puntos, posicion } = req.body;
+    
+    // Actualizamos la consulta para incluir el campo 'equipo'
+    const sql = "UPDATE ranking SET equipo = ?, pj = ?, puntos = ?, posicion = ? WHERE id = ?";
+    
+    db.query(sql, [equipo, pj, puntos, posicion, id], (err, result) => {
+        if (err) {
+            console.error("Error al actualizar ranking:", err);
+            return res.status(500).send(err);
+        }
+        res.json({ message: "Ranking actualizado correctamente" });
+    });
+});
+
+// 2. Añadir equipo a la liga
+app.post('/api/admin/ranking', verificarToken, (req, res) => {
+    const { equipo, pj, puntos, posicion } = req.body;
+    const sql = "INSERT INTO ranking (equipo, pj, puntos, posicion) VALUES (?, ?, ?, ?)";
+    
+    db.query(sql, [equipo, pj || 0, puntos || 0, posicion], (err, result) => {
+        if (err) {
+            console.error("Error al añadir equipo:", err);
+            return res.status(500).send(err);
+        }
+        res.json({ message: "Equipo añadido", id: result.insertId });
+    });
+});
+
+// Eliminar equipo de la liga
+app.delete('/api/admin/ranking/:id', verificarToken, (req, res) => {
+    const { id } = req.params;
+    db.query("DELETE FROM ranking WHERE id = ?", [id], (err, result) => {
+        if (err) {
+            console.error("Error al eliminar equipo:", err);
+            return res.status(500).send(err);
+        }
+        res.json({ message: "Equipo eliminado" });
     });
 });
 

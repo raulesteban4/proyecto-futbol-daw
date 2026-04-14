@@ -1,0 +1,395 @@
+/* Home.css - Estilos para la página de inicio */
+
+.home-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+/* HERO SECTION */
+.hero-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 40px;
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    color: white;
+    min-height: 400px;
+}
+
+.hero-content {
+    flex: 1;
+    max-width: 500px;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-primary {
+    background: #22c55e;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #16a34a;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: white;
+    color: #1e3a8a;
+}
+
+.hero-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-image img {
+    max-width: 400px;
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* SECTIONS GENERAL */
+.section {
+    padding: 60px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    color: #1e3a8a;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: bold;
+}
+
+.btn-ver-mas {
+    display: block;
+    margin: 40px auto 0;
+    background: #1e3a8a;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-ver-mas:hover {
+    background: #152c5c;
+    transform: translateY(-2px);
+}
+
+/* PARTIDOS SECTION */
+.partidos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.partido-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.partido-card:hover {
+    transform: translateY(-5px);
+}
+
+.partido-fecha {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.partido-rival {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.equipo-local, .equipo-visitante {
+    color: #1e3a8a;
+}
+
+.vs {
+    color: #666;
+    margin: 0 10px;
+}
+
+.partido-ubicacion {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.partido-resultado {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #22c55e;
+    margin-top: 10px;
+}
+
+/* CLASIFICACIÓN SECTION */
+.clasificacion-table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.table-header, .table-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px 60px;
+    padding: 15px 20px;
+    align-items: center;
+}
+
+.table-header {
+    background: #1e3a8a;
+    color: white;
+    font-weight: bold;
+}
+
+.table-row {
+    border-bottom: 1px solid #eee;
+}
+
+.table-row.destacado {
+    background: #eff6ff;
+    border-left: 4px solid #1e3a8a;
+}
+
+.table-row:last-child {
+    border-bottom: none;
+}
+
+/* JUGADORES SECTION */
+.jugadores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.jugador-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    position: relative;
+}
+
+.jugador-card:hover {
+    transform: translateY(-5px);
+}
+
+.dorsal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #1e3a8a;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.jugador-card h3 {
+    margin: 10px 0;
+    color: #1e3a8a;
+    font-size: 1.2rem;
+}
+
+.jugador-card p {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+/* TIENDA SECTION */
+.productos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.producto-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.producto-card:hover {
+    transform: translateY(-5px);
+}
+
+.producto-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.producto-info {
+    padding: 15px;
+}
+
+.categoria {
+    background: #22c55e;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.producto-card h3 {
+    margin: 10px 0;
+    color: #1e3a8a;
+    font-size: 1.1rem;
+}
+
+.precio {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #22c55e;
+    margin: 5px 0;
+}
+
+.stock {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* STATS SECTION */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card h3 {
+    font-size: 2.5rem;
+    color: #1e3a8a;
+    margin-bottom: 10px;
+}
+
+.stat-card p {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .hero-section {
+        flex-direction: column;
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .section {
+        padding: 40px 20px;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .partidos-grid,
+    .jugadores-grid,
+    .productos-grid,
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .table-header,
+    .table-row {
+        grid-template-columns: 50px 1fr 50px 50px;
+        font-size: 0.9rem;
+    }
+}

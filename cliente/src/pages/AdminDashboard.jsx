@@ -129,38 +129,102 @@ function AdminDashboard() {
             <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '10px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
                 {/* CONTENIDO SEGÚN PESTAÑA */}
                 {tab === 'partidos' && (
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead>
-                            <tr style={{ borderBottom: '2px solid #eee' }}>
-                                <th style={{ textAlign: 'left', padding: '10px' }}>Rival</th>
-                                <th>Goles Local</th>
-                                <th>Goles Visitante</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.map(m => (
-                                <tr key={m.id} style={{ borderBottom: '1px solid #eee' }}>
-                                    <td style={{ padding: '10px' }}>{m.rival}</td>
-                                    <td style={{ textAlign: 'center' }}>
-                                        <input type="number" defaultValue={m.goles_local} id={`gl-${m.id}`} style={{ width: '50px' }} />
-                                    </td>
-                                    <td style={{ textAlign: 'center' }}>
-                                        <input type="number" defaultValue={m.goles_visitante} id={`gv-${m.id}`} style={{ width: '50px' }} />
-                                    </td>
-                                    <td style={{ textAlign: 'center' }}>
-                                        <button onClick={() => {
-                                            const gL = document.getElementById(`gl-${m.id}`).value;
-                                            const gV = document.getElementById(`gv-${m.id}`).value;
-                                            guardarResultado(m.id, gL, gV);
-                                        }} style={{ backgroundColor: '#1e3a8a', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}>
-                                            Actualizar
-                                        </button>
-                                    </td>
+                    <div>
+                        {/* Formulario para añadir partido con Ubicación y Fecha completa */}
+                        <div style={{ backgroundColor: '#f9fafb', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #e5e7eb' }}>
+                            <h3 style={{ marginTop: 0, color: '#1e3a8a', fontSize: '16px' }}>Programar Nuevo Partido</h3>
+                            <form onSubmit={(e) => {
+                                e.preventDefault();
+                                const token = localStorage.getItem('token_fc_canaveral');
+                                const nuevoP = {
+                                    rival: e.target.rival.value,
+                                    fecha: e.target.fecha.value,
+                                    ubicacion: e.target.ubicacion.value,
+                                    goles_local: 0,
+                                    goles_visitante: 0,
+                                    jugado: false
+                                };
+                                axios.post('http://localhost:5000/api/admin/partidos', nuevoP, {
+                                    headers: { 'Authorization': `Bearer ${token}` }
+                                }).then(() => {
+                                    alert("Partido añadido correctamente");
+                                    e.target.reset();
+                                    cargarDatos();
+                                }).catch(err => alert("Error al añadir partido"));
+                            }} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                                <input name="rival" placeholder="Rival" required style={{ ...inputStyle, flex: 1 }} />
+                                <input name="ubicacion" placeholder="Campo / Ubicación" required style={{ ...inputStyle, flex: 1 }} />
+                                <input name="fecha" type="datetime-local" required style={{ ...inputStyle, width: 'auto' }} />
+                                <button type="submit" style={btnOkStyle}>+ Añadir</button>
+                            </form>
+                        </div>
+
+                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                            <thead>
+                                <tr style={{ borderBottom: '2px solid #eee' }}>
+                                    <th style={{ textAlign: 'left', padding: '10px' }}>Partido</th>
+                                    <th>Fecha y Hora</th>
+                                    <th>Ubicación</th>
+                                    <th>Goles L/V</th>
+                                    <th>Acciones</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {data.map(m => (
+                                    <tr key={m.id} style={{ borderBottom: '1px solid #eee' }}>
+                                        <td style={{ padding: '10px' }}>
+                                            <input id={`riv-${m.id}`} defaultValue={m.rival} style={{ ...inputStyle, fontWeight: 'bold' }} />
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            {/* Input para editar fecha y hora */}
+                                            <input
+                                                id={`fec-${m.id}`}
+                                                type="datetime-local"
+                                                defaultValue={m.fecha ? new Date(m.fecha).toISOString().slice(0, 16) : ''}
+                                                style={inputStyle}
+                                            />
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <input id={`ubi-${m.id}`} defaultValue={m.ubicacion} style={inputStyle} />
+                                        </td>
+                                        <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                                            <input type="number" defaultValue={m.goles_local} id={`gl-${m.id}`} style={{ width: '40px', textAlign: 'center' }} />
+                                            <span> - </span>
+                                            <input type="number" defaultValue={m.goles_visitante} id={`gv-${m.id}`} style={{ width: '40px', textAlign: 'center' }} />
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <button onClick={() => {
+                                                const token = localStorage.getItem('token_fc_canaveral');
+                                                const actualizado = {
+                                                    rival: document.getElementById(`riv-${m.id}`).value,
+                                                    fecha: document.getElementById(`fec-${m.id}`).value,
+                                                    ubicacion: document.getElementById(`ubi-${m.id}`).value,
+                                                    goles_local: document.getElementById(`gl-${m.id}`).value,
+                                                    goles_visitante: document.getElementById(`gv-${m.id}`).value,
+                                                    jugado: true
+                                                };
+                                                axios.put(`http://localhost:5000/api/admin/partidos/${m.id}`, actualizado, {
+                                                    headers: { 'Authorization': `Bearer ${token}` }
+                                                }).then(() => {
+                                                    alert("Partido actualizado");
+                                                    cargarDatos();
+                                                });
+                                            }} style={btnOkStyle}>Guardar</button>
+
+                                            <button onClick={() => {
+                                                if (window.confirm("¿Eliminar partido?")) {
+                                                    const token = localStorage.getItem('token_fc_canaveral');
+                                                    axios.delete(`http://localhost:5000/api/admin/partidos/${m.id}`, {
+                                                        headers: { 'Authorization': `Bearer ${token}` }
+                                                    }).then(() => cargarDatos());
+                                                }
+                                            }} style={{ ...btnDelStyle, marginLeft: '5px' }}>Borrar</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
 
                 {tab === 'jugadores' && (
@@ -289,41 +353,96 @@ function AdminDashboard() {
                 )}
 
                 {tab === 'clasificacion' && (
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead>
-                            <tr style={{ borderBottom: '2px solid #eee' }}>
-                                <th style={{ textAlign: 'left', padding: '10px' }}>Equipo</th>
-                                <th>PJ</th>
-                                <th>Pts</th>
-                                <th>Posición</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.map(e => (
-                                <tr key={e.id} style={{ borderBottom: '1px solid #eee' }}>
-                                    <td style={{ padding: '10px' }}>{e.equipo}</td>
-                                    <td style={{ textAlign: 'center' }}><input id={`pj-${e.id}`} defaultValue={e.pj} style={{ width: '40px' }} /></td>
-                                    <td style={{ textAlign: 'center' }}><input id={`pts-${e.id}`} defaultValue={e.puntos} style={{ width: '40px' }} /></td>
-                                    <td style={{ textAlign: 'center' }}><input id={`pos-${e.id}`} defaultValue={e.posicion} style={{ width: '40px' }} /></td>
-                                    <td style={{ textAlign: 'center' }}>
-                                        <button onClick={() => {
-                                            const token = localStorage.getItem('token_fc_canaveral');
-                                            const pj = document.getElementById(`pj-${e.id}`).value;
-                                            const pts = document.getElementById(`pts-${e.id}`).value;
-                                            const pos = document.getElementById(`pos-${e.id}`).value;
-                                            axios.put(`http://localhost:5000/api/admin/ranking/${e.id}`, { pj, puntos: pts, posicion: pos }, {
-                                                headers: {
-                                                    'Authorization': `Bearer ${token}`
-                                                }
-                                            })
-                                                .then(() => alert("Ranking actualizado"));
-                                        }} style={btnOkStyle}>Guardar</button>
-                                    </td>
+                    <div>
+                        {/* Formulario para añadir nuevo equipo a la liga */}
+                        <div style={{ backgroundColor: '#f9fafb', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #e5e7eb' }}>
+                            <h3 style={{ marginTop: 0, color: '#1e3a8a', fontSize: '16px' }}>Añadir Equipo a la Liga</h3>
+                            <form onSubmit={(e) => {
+                                e.preventDefault();
+                                const token = localStorage.getItem('token_fc_canaveral');
+                                const nuevoE = {
+                                    equipo: e.target.equipo.value,
+                                    pj: e.target.pj.value || 0,
+                                    puntos: e.target.puntos.value || 0,
+                                    posicion: e.target.posicion.value || 0
+                                };
+                                axios.post('http://localhost:5000/api/admin/ranking', nuevoE, {
+                                    headers: { 'Authorization': `Bearer ${token}` }
+                                }).then(() => {
+                                    alert("Equipo añadido correctamente");
+                                    e.target.reset();
+                                    cargarDatos();
+                                }).catch(err => alert("Error al añadir equipo"));
+                            }} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                                <input name="equipo" placeholder="Nombre del Equipo" required style={{ ...inputStyle, flex: 2 }} />
+                                <input name="pj" type="number" placeholder="PJ" style={{ ...inputStyle, flex: 0.5 }} />
+                                <input name="puntos" type="number" placeholder="Pts" style={{ ...inputStyle, flex: 0.5 }} />
+                                <input name="posicion" type="number" placeholder="Pos" style={{ ...inputStyle, flex: 0.5 }} />
+                                <button type="submit" style={btnOkStyle}>+ Añadir</button>
+                            </form>
+                        </div>
+
+                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                            <thead>
+                                <tr style={{ borderBottom: '2px solid #eee' }}>
+                                    <th style={{ textAlign: 'left', padding: '10px' }}>Equipo</th>
+                                    <th>PJ</th>
+                                    <th>Pts</th>
+                                    <th>Posición</th>
+                                    <th>Acción</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {data.map(e => (
+                                    <tr key={e.id} style={{ borderBottom: '1px solid #eee' }}>
+                                        <td style={{ padding: '10px' }}>
+                                            {/* Input para poder editar el nombre del equipo */}
+                                            <input id={`nom-e-${e.id}`} defaultValue={e.equipo} style={{ ...inputStyle, fontWeight: 'bold' }} />
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <input id={`pj-${e.id}`} type="number" defaultValue={e.pj} style={{ width: '50px', textAlign: 'center' }} />
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <input id={`pts-${e.id}`} type="number" defaultValue={e.puntos} style={{ width: '50px', textAlign: 'center' }} />
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <input id={`pos-${e.id}`} type="number" defaultValue={e.posicion} style={{ width: '50px', textAlign: 'center' }} />
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
+                                                <button onClick={() => {
+                                                    const token = localStorage.getItem('token_fc_canaveral');
+                                                    const actualizado = {
+                                                        equipo: document.getElementById(`nom-e-${e.id}`).value,
+                                                        pj: document.getElementById(`pj-${e.id}`).value,
+                                                        puntos: document.getElementById(`pts-${e.id}`).value,
+                                                        posicion: document.getElementById(`pos-${e.id}`).value
+                                                    };
+                                                    axios.put(`http://localhost:5000/api/admin/ranking/${e.id}`, actualizado, {
+                                                        headers: { 'Authorization': `Bearer ${token}` }
+                                                    }).then(() => {
+                                                        alert("Clasificación actualizada");
+                                                        cargarDatos();
+                                                    });
+                                                }} style={btnOkStyle}>Guardar</button>
+
+                                                <button onClick={() => {
+                                                    if (window.confirm(`¿Seguro que quieres eliminar a ${e.equipo}?`)) {
+                                                        const token = localStorage.getItem('token_fc_canaveral');
+                                                        axios.delete(`http://localhost:5000/api/admin/ranking/${e.id}`, {
+                                                            headers: { 'Authorization': `Bearer ${token}` }
+                                                        }).then(() => {
+                                                            cargarDatos();
+                                                        });
+                                                    }
+                                                }} style={btnDelStyle}>Borrar</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
 
                 {tab === 'tienda' && (
