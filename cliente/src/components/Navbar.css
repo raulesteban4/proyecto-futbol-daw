@@ -1,44 +1,269 @@
+:root {
+  --primary: #1e3a8a;     
+  --primary-light: #3b82f6;
+  --accent: #facc15;        
+  --white: #ffffff;
+  --transition: all 0.3s ease;
+}
+
 .navbar {
-  background-color: #1e3a8a; /* Tu azul oscuro */
-  padding: 15px 30px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  height: 70px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: white;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.nav-links {
-  display: flex;
-  gap: 20px;
-}
-
-.nav-links a, .cart-link, .login-link {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 1rem;
-}
-
-.nav-links a:hover, .cart-link:hover {
-  text-decoration: underline;
-}
-
-.nav-user {
+/* --- LOGO --- */
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--white);
+  text-decoration: none !important;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
+  z-index: 1100;
 }
 
-.btn-logout {
-  background: transparent;
-  border: 1px solid white;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
+/* --- NAVEGACIÓN DESKTOP (PC) --- */
+.nav-links-desktop {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links-desktop a {
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.nav-links-desktop a:hover, 
+.login-link:hover, 
+.cart-link:hover {
+  color: var(--accent) !important; /* Usa el amarillo para que resalte sobre el azul */
+  opacity: 1;
+}
+
+/* --- SECCIÓN USUARIO DESKTOP --- */
+.nav-user-desktop {
+  display: flex;
+  align-items: center; /* Alinea verticalmente el carrito y los botones */
+  gap: 1.5rem;
+}
+
+.auth-buttons {
+  display: flex;
+  align-items: center; /* Alinea Entrar y Registro entre sí */
+  gap: 0.75rem;
+}
+
+.login-link,
+.cart-link {
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  transition: var(--transition);
+}
+
+.login-link:hover,
+.cart-link:hover {
+  color: var(--accent) !important;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.register-btn {
+  color: var(--primary);
+  background-color: var(--white);
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.register-btn:hover {
+  background-color: #f4f4f4;
+  transform: translateY(-2px);
+}
+
+.btn-salir {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--white);
+  color: var(--white);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
   cursor: pointer;
+  transition: var(--transition);
 }
 
-.btn-logout:hover {
-  background: white;
-  color: #1e3a8a;
+.btn-salir:hover {
+  background: var(--white);
+  color: var(--primary);
+}
+
+/* --- BOTÓN HAMBURGUESA --- */
+.hamburger {
+  display: none; /* Se oculta en PC */
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1100;
+  padding: 5px;
+}
+
+.bar {
+  width: 25px;
+  height: 3px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: var(--transition);
+}
+
+/* Animación a X */
+.hamburger.active .bar:nth-child(2) { opacity: 0; }
+.hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* --- MENÚ MÓVIL (DESPLEGABLE) --- */
+.nav-mobile {
+  position: fixed;
+  top: -100vh; /* Escondido arriba */
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: var(--primary);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  transition: 0.5s cubic-bezier(0.77, 0.2, 0.05, 1);
+  z-index: 1050;
+}
+
+.nav-mobile.active {
+  top: 0; /* Aparece */
+}
+
+.mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.mobile-links a {
+  color: var(--white);
+  font-size: 1.5rem;
+  text-decoration: none;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.mobile-divider {
+  width: 50%;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-user-section a {
+  color: var(--white) !important; /* Asegura que el texto sea blanco siempre */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mobile-user-section span {
+  font-size: 1.4rem;
+}
+
+.mobile-user-section a:hover {
+  color: var(--accent) !important;
+}
+
+.mobile-auth-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mobile-register {
+  background: var(--accent);
+  color: var(--primary) !important;
+  padding: 15px;
+  border-radius: 10px;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.mobile-register:hover {
+  background-color: #bb9526;
+  color: var(--primary) !important;
+  transform: scale(1.02);
+}
+
+.mobile-login {
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.mobile-login:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent);
+  color: var(--accent) !important;  
+  transform: scale(1.02);
+}
+
+.mobile-btn-salir {
+  background: var(--white);
+  color: var(--primary);
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* --- RESPONSIVE DESIGN --- */
+@media (max-width: 968px) {
+  .nav-links-desktop, 
+  .nav-user-desktop {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
 }

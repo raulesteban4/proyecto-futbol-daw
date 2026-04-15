@@ -20,7 +20,7 @@ function Competicion() {
             {/* SECCIÓN CALENDARIO */}
             <div style={{ flex: '1', maxWidth: '600px' }}>
                 <h2 style={{ color: '#1e3a8a', borderBottom: '3px solid #1e3a8a', marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
-                    Calendario <span>⚽</span>
+                    Calendario
                 </h2>
 
                 {/* Próximos */}
@@ -43,8 +43,9 @@ function Competicion() {
                 {partidosJugados.map(m => (
                     <div key={m.id} style={{ ...cardStyle, opacity: 0.9 }}>
                         <div style={{ flex: 1 }}>
-                            <span style={dateStyle}>{new Date(m.fecha).toLocaleDateString()}</span>
+                            <span style={dateStyle}>{new Date(m.fecha).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })} - {new Date(m.fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}h</span>
                             <div style={teamsStyle}>FC Cañaveral vs {m.rival}</div>
+                            <span style={locationStyle}>📍 {m.ubicacion}</span>
                         </div>
                         <div style={scoreBadgeStyle}>
                             {m.goles_local} - {m.goles_visitante}
@@ -77,7 +78,7 @@ function Competicion() {
                                         <span style={posStyle(index + 1)}>{e.posicion}</span>
                                     </td>
                                     <td style={{ padding: '12px 10px' }}>
-                                        {e.equipo === 'FC Cañaveral' ? '🚀 ' + e.equipo : e.equipo}
+                                        {e.equipo === 'FC Cañaveral' ? '⭐ ' + e.equipo : e.equipo}
                                     </td>
                                     <td style={{ textAlign: 'center', color: '#64748b' }}>{e.pj}</td>
                                     <td style={{ textAlign: 'center', fontSize: '1.1rem' }}>{e.puntos}</td>

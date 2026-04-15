@@ -1,3 +1,42 @@
+/* Importación de tipografía moderna */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  /* COLORES PRIMARIOS */
+  --primary: #1e3a8a;
+  --primary-light: #3b82f6;
+  --primary-dark: #172554;
+  --secondary: #22c55e;
+  --secondary-light: #86efac
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --accent: #facc15;         
+
+  /* FONDOS */
+  --bg-body: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-hover: #f1f5f9;
+  
+  /* TEXTOS */
+  --text-main: #0f172a; 
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+  
+  /* BORDES */
+  --border-light: #e2e8f0;
+  --border-default: #cbd5e1;
+  
+  /* TRANSICIONES */
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.15s ease;
+  
+  /* SOMBRAS */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
 
 * {
   margin: 0;
@@ -5,42 +44,397 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  font-family: 'Segoe UI', Roboto, sans-serif;
-  background-color: #f0f2f5; 
-  color: #1a202c;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-body);
+  background-image: 
+    linear-gradient(135deg, transparent 24%, rgba(68, 68, 68, 0.05) 25%, rgba(68, 68, 68, 0.05) 26%, transparent 27%, transparent 74%, rgba(68, 68, 68, 0.05) 75%, rgba(68, 68, 68, 0.05) 76%, transparent 77%, transparent),
+    linear-gradient(45deg, transparent 24%, rgba(68, 68, 68, 0.05) 25%, rgba(68, 68, 68, 0.05) 26%, transparent 27%, transparent 74%, rgba(68, 68, 68, 0.05) 75%, rgba(68, 68, 68, 0.05) 76%, transparent 77%, transparent);
+  background-size: 60px 60px;
+  background-position: 0 0, 30px 30px;
+  color: var(--text-main);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* TIPOGRAFÍA */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+p {
+  margin-bottom: 1rem;
+  color: var(--text-muted);
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+a:hover {
+  color: var(--primary-light);
+  text-decoration: underline;
+}
+
+/* CONTENEDORES */
 .main-container {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
-  min-height: calc(100vh - 70px); /* Resta la altura del Navbar */
+  padding: 40px 20px;
+  min-height: calc(100vh - 80px);
+  animation: fadeIn 0.5s ease-out;
 }
 
-h1, h2 {
-  color: #1e3a8a;
-  margin-bottom: 20px;
-  text-align: center;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.grid-jugadores {
+/* BOTONES */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border: none;
+  font-size: 1rem;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary:hover {
+  background-color: #16a34a;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-comprar {
+  background-color: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  padding: 12px 20px;
+}
+
+.btn-comprar:hover {
+  background-color: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.btn-comprar:disabled {
+  background-color: var(--text-light);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-pagar {
+  background-color: var(--secondary);
+  color: white;
+  padding: 15px 40px;
+  font-size: 1.1rem;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-pagar:hover {
+  background-color: #16a34a;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* INPUTS Y FORMS */
+input, select, textarea {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  transition: var(--transition-fast);
+  background-color: var(--bg-card);
+  color: var(--text-main);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+}
+
+input::placeholder {
+  color: var(--text-light);
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+/* TARJETAS */
+.tarjeta-jugador,
+.card {
+  background: var(--bg-card);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+  position: relative;
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.tarjeta-jugador:hover,
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary-light);
+}
+
+/* GRIDS */
+.grid-jugadores,
+.productos-grid,
+.jugadores-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 25px;
   margin-top: 30px;
 }
 
-.tarjeta-jugador {
-  background: white;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  border-top: 4px solid #1e3a8a;
-  transition: transform 0.2s;
+.partidos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
 }
 
-.tarjeta-jugador:hover {
-  transform: translateY(-5px); /* Efecto al pasar el ratón */
+/* TABLAS */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+thead {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+}
+
+th {
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+td {
+  padding: 15px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+tbody tr:hover {
+  background-color: var(--bg-hover);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-body);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 5px;
+  transition: var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 1024px) {
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  .main-container {
+    padding: 30px 20px;
+  }
+  
+  .grid-jugadores,
+  .productos-grid,
+  .jugadores-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.35rem;
+  }
+  
+  h3 {
+    font-size: 1.1rem;
+  }
+  
+  .main-container {
+    padding: 20px 15px;
+    min-height: calc(100vh - 70px);
+  }
+  
+  button {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+  }
+  
+  input, select, textarea {
+    padding: 10px 12px;
+    font-size: 16px;
+  }
+  
+  .grid-jugadores,
+  .productos-grid,
+  .jugadores-grid,
+  .partidos-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  table {
+    font-size: 0.9rem;
+  }
+  
+  th, td {
+    padding: 12px 8px;
+  }
+  
+  .tarjeta-jugador,
+  .card {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  .main-container {
+    padding: 15px 12px;
+  }
+  
+  button {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .btn-pagar,
+  .btn-comprar {
+    padding: 12px 16px;
+  }
+  
+  input, select, textarea {
+    padding: 8px 10px;
+    font-size: 16px;
+  }
+  
+  table {
+    font-size: 0.8rem;
+  }
+  
+  th, td {
+    padding: 8px 4px;
+  }
+  
+  .tarjeta-jugador,
+  .card {
+    padding: 16px;
+  }
 }

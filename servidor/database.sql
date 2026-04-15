@@ -132,4 +132,29 @@ INSERT INTO matches (rival, fecha, ubicacion, goles_local, goles_visitante, juga
 ('Getafe City', '2024-05-04 11:30:00', 'Polideportivo Cañaveral', 0, 0, FALSE),
 ('Fuenlabrada Promesas', '2024-05-11 16:00:00', 'Ciudad Deportiva Fuenlabrada', 0, 0, FALSE),
 ('Alcorcón Academy', '2024-05-18 10:30:00', 'Polideportivo Cañaveral', 0, 0, FALSE),
-('Real Aranjuez', '2024-05-25 18:00:00', 'Estadio El Deleite', 0, 0, FALSE),
+('Real Aranjuez', '2024-05-25 18:00:00', 'Estadio El Deleite', 0, 0, FALSE);
+
+-- Insertamos la plantilla vinculada al equipo con ID 1 (FC Cañaveral)
+INSERT INTO players (nombre, posicion, dorsal, team_id, goles, asistencias, amarillas, rojas) VALUES 
+('David García', 'Portero', 1, 1, 0, 0, 1, 0),
+('Sergio Ramos Jr.', 'Defensa', 4, 1, 1, 0, 3, 1),
+('Iván López', 'Defensa', 2, 1, 0, 4, 2, 0),
+('Carlos Hierro', 'Defensa', 5, 1, 2, 1, 4, 0),
+('Miguel Aranda', 'Defensa', 3, 1, 0, 2, 1, 0),
+('Lucas Modric', 'Centrocampista', 10, 1, 3, 8, 2, 0),
+('Marcos Ruíz', 'Centrocampista', 6, 1, 1, 2, 5, 0),
+('Dani Parejo', 'Centrocampista', 8, 1, 4, 5, 1, 0),
+('Raúl González (C)', 'Delantero', 7, 1, 12, 3, 0, 0),
+('Kevin De Bruyne', 'Delantero', 11, 1, 6, 9, 1, 0),
+('Álvaro Morata', 'Delantero', 17, 1, 8, 2, 2, 0),
+
+-- Suplentes y Rotación
+('Iker Casillas II', 'Portero', 13, 1, 0, 0, 0, 0),
+('Jorge Molina', 'Delantero', 19, 1, 5, 1, 0, 0),
+('Santi Cazorla Jr.', 'Centrocampista', 21, 1, 2, 4, 0, 0),
+('Pepe', 'Defensa', 15, 1, 0, 0, 6, 2),
+('Luis Figo del Sur', 'Delantero', 20, 1, 1, 3, 1, 0),
+('Andrés Mago', 'Centrocampista', 16, 1, 0, 5, 0, 0),
+('Borja Iglesias', 'Delantero', 9, 1, 3, 0, 1, 0),
+('Nacho', 'Defensa', 12, 1, 1, 1, 2, 0),
+('Gavi', 'Defensa', 18, 1, 2, 2, 4, 0);

@@ -3,86 +3,69 @@ import axios from 'axios';
 import './Plantilla.css';
 
 function Plantilla() {
-  const [jugadores, setJugadores] = useState([]);
-  const [nuevo, setNuevo] = useState({ nombre: '', posicion: '', dorsal: '', team_id: 1 });
+    const [jugadores, setJugadores] = useState([]);
 
-  const obtenerJugadores = () => {
-    const token = localStorage.getItem('token_fc_canaveral');
-    axios.get('http://localhost:5000/api/jugadores', {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-      .then(res => setJugadores(res.data))
-      .catch(err => console.error("Error al obtener:", err));
-  };
+    useEffect(() => {
+        // Obtenemos solo los jugadores del FC Cañaveral (team_id = 1)
+        axios.get('http://localhost:5000/api/jugadores')
+            .then(res => {
+                // Si tu API trae a todos, filtramos aquí por team_id 1
+                const misJugadores = res.data.filter(p => p.team_id === 1);
+                setJugadores(misJugadores);
+            });
+    }, []);
 
-  useEffect(() => { obtenerJugadores(); }, []);
+    // Función para agrupar por posición
+    const renderSeccion = (titulo, pos) => {
+        const filtrados = jugadores.filter(j => j.posicion.toLowerCase().includes(pos));
+        if (filtrados.length === 0) return null;
 
-  const fichar = (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem('token_fc_canaveral');
-    axios.post('http://localhost:5000/api/jugadores', nuevo, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-      .then(() => {
-        obtenerJugadores();
-        setNuevo({ nombre: '', posicion: '', dorsal: '', team_id: 1 });
-      });
-  };
-
-  const eliminar = (id) => {
-    if (window.confirm("¿Eliminar ficha?")) {
-      const token = localStorage.getItem('token_fc_canaveral');
-      axios.delete(`http://localhost:5000/api/jugadores/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      }).then(() => obtenerJugadores());
-    }
-  };
-
-  return (
-    <div className="plantilla-container">
-      <h1 className="titulo-seccion">Gestión de Plantilla</h1>
-
-      {/* FORMULARIO DE FICHAJES (ADMIN) */}
-      <section className="formulario-fichaje">
-        <h3>Nuevo Fichaje</h3>
-        <form onSubmit={fichar}>
-          <input type="text" placeholder="Nombre" value={nuevo.nombre} onChange={e => setNuevo({...nuevo, nombre: e.target.value})} required />
-          <select value={nuevo.posicion} onChange={e => setNuevo({...nuevo, posicion: e.target.value})} required>
-            <option value="">Posición</option>
-            <option value="Portero">Portero</option>
-            <option value="Defensa">Defensa</option>
-            <option value="Centrocampista">Centrocampista</option>
-            <option value="Delantero">Delantero</option>
-          </select>
-          <input type="number" placeholder="Dorsal" value={nuevo.dorsal} onChange={e => setNuevo({...nuevo, dorsal: e.target.value})} required />
-          <button type="submit">AÑADIR A LA LISTA</button>
-        </form>
-      </section>
-      <br /><br />
-
-      {/* LISTADO DE JUGADORES */}
-      <div className="jugadores-grid">
-        {jugadores.length > 0 ? (
-          jugadores.map(j => (
-            <div key={j.id} className="tarjeta-jugador">
-              <span className="dorsal">#{j.dorsal}</span>
-              <h3 className="nombre-jugador">{j.nombre}</h3>
-              <p className="posicion-jugador">{j.posicion}</p>
-              <button className="btn-eliminar" onClick={() => eliminar(j.id)}>BAJA</button>
+        return (
+            <div className="squad-section">
+                <h2 className="section-title">{titulo}</h2>
+                <div className="players-grid">
+                    {filtrados.map(j => (
+                        <div key={j.id} className="player-card">
+                            <div className="player-number">{j.dorsal}</div>
+                            <div className="player-info">
+                                <h3 className="player-name">{j.nombre}</h3>
+                                <p className="player-pos">{j.posicion}</p>
+                            </div>
+                            <div className="player-stats">
+                                <div className="stat-item">
+                                    <span className="stat-value">{j.goles}</span>
+                                    <span className="stat-label">Goles</span>
+                                </div>
+                                <div className="stat-item">
+                                    <span className="stat-value">{j.asistencias}</span>
+                                    <span className="stat-label">Asist.</span>
+                                </div>
+                                <div className="stat-item card-stat">
+                                    <span className="stat-value yellow">{j.amarillas}</span>
+                                    <span className="stat-value red">{j.rojas}</span>
+                                    <span className="stat-label">Tarjetas</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
-          ))
-        ) : (
-          <p>Cargando jugadores o base de datos vacía...</p>
-        )}
-      </div>
-    </div>
-  );
+        );
+    };
+
+    return (
+        <div className="squad-container">
+            <header className="squad-header">
+                <h1>Plantilla Oficial</h1>
+                <p>FC Cañaveral | Temporada 2025/26</p>
+            </header>
+
+            {renderSeccion("Porteros", "portero")}
+            {renderSeccion("Defensas", "defensa")}
+            {renderSeccion("Centrocampistas", "centrocampista")}
+            {renderSeccion("Delanteros", "delantero")}
+        </div>
+    );
 }
 
 export default Plantilla;
