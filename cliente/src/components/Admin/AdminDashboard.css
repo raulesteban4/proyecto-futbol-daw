@@ -1,0 +1,117 @@
+.admin-container {
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (max-width: 1024px) {
+    .admin-container {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 15px;
+    }
+}
+
+.admin-title {
+    color: #1e3a8a;
+    margin-bottom: 20px;
+    font-size: 28px;
+}
+
+@media (max-width: 768px) {
+    .admin-title {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-title {
+        font-size: 20px;
+    }
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .admin-tabs {
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-tabs {
+        flex-direction: column;
+        gap: 6px;
+    }
+}
+
+.admin-tab-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    background-color: #e5e7eb;
+    color: #374151;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .admin-tab-button {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-tab-button {
+        padding: 10px 12px;
+        font-size: 12px;
+        flex: 1;
+        white-space: normal;
+    }
+}
+
+.admin-tab-button:hover {
+    opacity: 0.8;
+}
+
+.admin-tab-button.active {
+    background-color: #1e3a8a;
+    color: white;
+}
+
+.admin-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .admin-content {
+        padding: 15px;
+        border-radius: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-content {
+        padding: 12px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+}

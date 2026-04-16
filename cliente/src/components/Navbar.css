@@ -32,6 +32,11 @@
   z-index: 1100;
 }
 
+.navbar-logo-img {
+  height: 40px;
+  width: auto;
+}
+
 /* --- NAVEGACIÓN DESKTOP (PC) --- */
 .nav-links-desktop {
   display: flex;
@@ -50,20 +55,20 @@
 .nav-links-desktop a:hover, 
 .login-link:hover, 
 .cart-link:hover {
-  color: var(--accent) !important; /* Usa el amarillo para que resalte sobre el azul */
+  color: var(--accent) !important;
   opacity: 1;
 }
 
 /* --- SECCIÓN USUARIO DESKTOP --- */
 .nav-user-desktop {
   display: flex;
-  align-items: center; /* Alinea verticalmente el carrito y los botones */
+  align-items: center;
   gap: 1.5rem;
 }
 
 .auth-buttons {
   display: flex;
-  align-items: center; /* Alinea Entrar y Registro entre sí */
+  align-items: center;
   gap: 0.75rem;
 }
 
@@ -118,7 +123,7 @@
 
 /* --- BOTÓN HAMBURGUESA --- */
 .hamburger {
-  display: none; /* Se oculta en PC */
+  display: none;
   flex-direction: column;
   gap: 5px;
   background: none;
@@ -144,7 +149,7 @@
 /* --- MENÚ MÓVIL (DESPLEGABLE) --- */
 .nav-mobile {
   position: fixed;
-  top: -100vh; /* Escondido arriba */
+  top: -100vh;
   left: 0;
   width: 100%;
   height: 100vh;
@@ -159,7 +164,7 @@
 }
 
 .nav-mobile.active {
-  top: 0; /* Aparece */
+  top: 0;
 }
 
 .mobile-links {
@@ -184,7 +189,7 @@
 }
 
 .mobile-user-section a {
-  color: var(--white) !important; /* Asegura que el texto sea blanco siempre */
+  color: var(--white) !important;
   display: flex;
   align-items: center;
   justify-content: center;

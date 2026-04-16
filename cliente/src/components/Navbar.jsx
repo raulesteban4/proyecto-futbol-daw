@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useUser } from '../context/UserContext';
+import logo from '../assets/FC CAÑAVERAL escudo.avif';
 import './Navbar.css';
 
 function Navbar() {
@@ -22,7 +23,7 @@ function Navbar() {
     return (
         <nav className="navbar">
             <Link to="/" className="navbar-logo" onClick={closeMenu}>
-                <span>⚽</span> FC Cañaveral
+                <img src={logo} alt="FC Cañaveral Logo" className="navbar-logo-img" /> FC Cañaveral
             </Link>
 
             {/* --- NAVEGACIÓN DESKTOP --- */}

@@ -1,0 +1,370 @@
+.tab-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .tab-form {
+        flex-direction: column;
+    }
+
+    .tab-form > input,
+    .tab-form > select,
+    .tab-form > button {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+}
+
+.tab-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+@media (max-width: 1024px) {
+    .tab-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.tab-form-grid.full-width {
+    grid-column: span 2;
+}
+
+@media (max-width: 1024px) {
+    .tab-form-grid.full-width {
+        grid-column: span 1;
+    }
+}
+
+.form-input {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #1e3a8a;
+    box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1);
+}
+
+.form-box {
+    background-color: #f9fafb;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #e5e7eb;
+}
+
+@media (max-width: 768px) {
+    .form-box {
+        padding: 12px;
+    }
+}
+
+.form-box h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #1e3a8a;
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    .form-box h3 {
+        font-size: 14px;
+    }
+}
+
+.form-box-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .form-box-form {
+        flex-direction: column;
+    }
+
+    .form-box-form > input,
+    .form-box-form > select,
+    .form-box-form > button {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+}
+
+/* Buttons */
+
+.btn-ok {
+    background-color: #22c55e;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.btn-ok:hover {
+    background-color: #16a34a;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-ok:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .btn-ok {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+}
+
+.btn-delete {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.btn-delete:hover {
+    background-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-delete:active {
+    transform: translateY(0);
+}
+
+.btn-delete-margin {
+    margin-left: 5px;
+}
+
+@media (max-width: 768px) {
+    .btn-delete-margin {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+}
+
+/* Tables */
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .admin-table {
+        font-size: 12px;
+    }
+}
+
+.admin-table thead {
+    background-color: #f9fafb;
+    border-bottom: 2px solid #ddd;
+}
+
+.admin-table th {
+    padding: 12px 10px;
+    text-align: center;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .admin-table th {
+        padding: 8px 6px;
+    }
+}
+
+.admin-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+@media (max-width: 768px) {
+    .admin-table td {
+        padding: 8px 6px;
+    }
+}
+
+
+
+@media (max-width: 768px) {
+    .admin-table tr:hover {
+        background-color: transparent;
+    }
+}
+
+/* Table Actions Container */
+
+.table-actions {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .table-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .table-actions .btn-ok,
+    .table-actions .btn-delete {
+        width: 100%;
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
+
+/* Input Styles */
+
+.stat-input {
+    width: 50px;
+    padding: 6px 4px;
+    text-align: center;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    margin: 0 2px;
+    font-size: 13px;
+    transition: border-color 0.2s ease;
+}
+
+.stat-input:focus {
+    outline: none;
+    border-color: #1e3a8a;
+}
+
+.stat-input.yellow {
+    border-color: #fbbf24;
+}
+
+.stat-input.yellow:focus {
+    border-color: #ca8a04;
+}
+
+.stat-input.red {
+    border-color: #ef4444;
+}
+
+.stat-input.red:focus {
+    border-color: #dc2626;
+}
+
+.stat-input.blue {
+    border-color: #1e3a8a;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .stat-input {
+        width: 40px;
+        padding: 4px 2px;
+        font-size: 12px;
+        margin: 0 1px;
+    }
+}
+
+.form-select {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #1e3a8a;
+    box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1);
+}
+
+@media (max-width: 768px) {
+    .form-select {
+        font-size: 13px;
+    }
+}
+
+/* Helper Classes */
+
+.flex-center {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-bold {
+    font-weight: 600;
+}
+
+.text-small {
+    font-size: 12px;
+}
+
+.text-xsmall {
+    font-size: 10px;
+}
+
+.text-muted {
+    color: #666;
+}
+
+.text-error {
+    color: #ef4444;
+}
+
+.white-space-nowrap {
+    white-space: nowrap;
+}
+
+/* Responsive Tables for Mobile */
+
+@media (max-width: 768px) {
+    .admin-table {
+        font-size: 11px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 6px 4px;
+    }
+
+    .admin-table textarea {
+        max-width: 100%;
+        min-height: 60px;
+    }
+}
