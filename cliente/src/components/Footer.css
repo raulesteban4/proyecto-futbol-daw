@@ -1,0 +1,118 @@
+.footer {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 48px 24px 24px;
+    margin-top: auto;
+}
+
+.footer__inner {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.footer__brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer__logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.footer__brand-text strong {
+    color: white;
+    font-size: 1.15rem;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.footer__brand-text p {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.footer__links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-bottom: 32px;
+}
+
+.footer__col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer__col h4 {
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.footer__col button {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    font-weight: 400;
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+    transition: color 0.2s ease;
+    font-family: inherit;
+}
+
+.footer__col button:hover {
+    color: white;
+}
+
+.footer__bottom {
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+}
+
+.footer__bottom p {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.75rem;
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .footer {
+        padding: 36px 16px 20px;
+    }
+
+    .footer__brand {
+        margin-bottom: 24px;
+        padding-bottom: 20px;
+        gap: 12px;
+    }
+
+    .footer__logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .footer__links {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+
+    .footer__col {
+        gap: 8px;
+    }
+}
