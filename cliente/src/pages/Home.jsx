@@ -57,7 +57,7 @@ function Home() {
 
     const canaveralInfo = clasificacion.find(c => c.equipo === 'FC Cañaveral');
     const partidosJugados = partidos.filter(p => p.jugado).length;
-    const golesFavor = partidos.filter(p => p.jugado).reduce((sum, p) => sum + p.goles_local, 0);
+    const victorias = partidos.filter(p => p.jugado && p.goles_local > p.goles_visitante).length;
 
     return (
         <div className="home">
@@ -90,11 +90,11 @@ function Home() {
                         </div>
                         <div className="hero-stat">
                             <span className="hero-stat__value">{partidosJugados}</span>
-                            <span className="hero-stat__label">Partidos</span>
+                            <span className="hero-stat__label">Jugados</span>
                         </div>
                         <div className="hero-stat">
-                            <span className="hero-stat__value">{canaveralInfo?.posicion || '-'}</span>
-                            <span className="hero-stat__label">Posición</span>
+                            <span className="hero-stat__value">{victorias}</span>
+                            <span className="hero-stat__label">Victorias</span>
                         </div>
                         <div className="hero-stat">
                             <span className="hero-stat__value">{canaveralInfo?.puntos || 0}</span>
@@ -139,35 +139,6 @@ function Home() {
                     </div>
                 </section>
             )}
-
-            {/* STATS BAR */}
-            <section className="stats-bar">
-                <div className="stats-bar__inner">
-                    <div className="stat-item">
-                        <span className="stat-item__icon">⚽</span>
-                        <div>
-                            <span className="stat-item__value">{golesFavor}</span>
-                            <span className="stat-item__label">Goles a favor</span>
-                        </div>
-                    </div>
-                    <div className="stat-item stat-item--divider"></div>
-                    <div className="stat-item">
-                        <span className="stat-item__icon">🏆</span>
-                        <div>
-                            <span className="stat-item__value">{resultadosRecientes.filter(m => m.goles_local > m.goles_visitante).length}</span>
-                            <span className="stat-item__label">Victorias</span>
-                        </div>
-                    </div>
-                    <div className="stat-item stat-item--divider"></div>
-                    <div className="stat-item">
-                        <span className="stat-item__icon">👥</span>
-                        <div>
-                            <span className="stat-item__value">{jugadores.length}</span>
-                            <span className="stat-item__label">Plantilla</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             {/* RESULTS */}
             <section className="section section--matches">

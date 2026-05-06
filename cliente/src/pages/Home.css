@@ -339,65 +339,6 @@
     transform: translateY(-1px);
 }
 
-/* STATS BAR */
-.stats-bar {
-    padding: 0 24px;
-    margin-bottom: 36px;
-}
-
-.stats-bar__inner {
-    max-width: 700px;
-    margin: 0 auto;
-    background: white;
-    border-radius: 14px;
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--border-light);
-}
-
-.stat-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 4px 8px;
-}
-
-.stat-item--divider {
-    width: 1px;
-    height: 36px;
-    background: var(--border-light);
-    padding: 0;
-}
-
-.stat-item--divider .stat-item__icon,
-.stat-item--divider .stat-item__value,
-.stat-item--divider .stat-item__label {
-    display: none;
-}
-
-.stat-item__icon {
-    font-size: 1.5rem;
-    line-height: 1;
-}
-
-.stat-item__value {
-    display: block;
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: var(--primary-dark);
-    line-height: 1;
-}
-
-.stat-item__label {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
 /* SECTIONS */
 .section {
     max-width: 900px;
@@ -923,32 +864,6 @@
 
     .next-match__team-name {
         font-size: 0.9rem;
-    }
-
-    .stats-bar {
-        padding: 0 16px;
-        margin-bottom: 28px;
-    }
-
-    .stats-bar__inner {
-        padding: 16px 14px;
-    }
-
-    .stat-item {
-        gap: 8px;
-        padding: 4px;
-    }
-
-    .stat-item__icon {
-        font-size: 1.2rem;
-    }
-
-    .stat-item__value {
-        font-size: 1rem;
-    }
-
-    .stat-item__label {
-        font-size: 0.6rem;
     }
 
     .section {
