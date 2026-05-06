@@ -2,10 +2,11 @@ import axios from 'axios';
 import './tabs.css';
 
 function TiendaTab({ data, setData }) {
+    const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
     const cargarDatos = () => {
         const token = localStorage.getItem('token_fc_canaveral');
-        axios.get('http://localhost:5000/api/productos', {
+        axios.get(`${API}/api/productos`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(res => setData(res.data))
@@ -23,7 +24,7 @@ function TiendaTab({ data, setData }) {
             imagen_url: document.getElementById(`prod-img-${id}`).value
         };
 
-        axios.put(`http://localhost:5000/api/admin/productos/${id}`, actualizado, {
+        axios.put(`${API}/api/admin/productos/${id}`, actualizado, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(() => {
@@ -36,7 +37,7 @@ function TiendaTab({ data, setData }) {
     const eliminarProducto = (id) => {
         if (window.confirm("¿Seguro que quieres eliminar este producto?")) {
             const token = localStorage.getItem('token_fc_canaveral');
-            axios.delete(`http://localhost:5000/api/admin/productos/${id}`, {
+            axios.delete(`${API}/api/admin/productos/${id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
                 .then(() => {
@@ -60,7 +61,7 @@ function TiendaTab({ data, setData }) {
                     descripcion: e.target.descripcion.value,
                     imagen_url: e.target.imagen.value || 'https://via.placeholder.com/150'
                 };
-                axios.post('http://localhost:5000/api/admin/productos', producto, {
+                axios.post(`${API}/api/admin/productos`, producto, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 }).then(() => {
                     alert("Producto añadido");

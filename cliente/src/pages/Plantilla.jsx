@@ -2,20 +2,19 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Plantilla.css';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function Plantilla() {
     const [jugadores, setJugadores] = useState([]);
 
     useEffect(() => {
-        // Obtenemos solo los jugadores del FC Cañaveral (team_id = 1)
-        axios.get('http://localhost:5000/api/jugadores')
+        axios.get(`${API}/api/jugadores`)
             .then(res => {
-                // Si tu API trae a todos, filtramos aquí por team_id 1
                 const misJugadores = res.data.filter(p => p.team_id === 1);
                 setJugadores(misJugadores);
             });
     }, []);
 
-    // Función para agrupar por posición
     const renderSeccion = (titulo, pos) => {
         const filtrados = jugadores.filter(j => j.posicion.toLowerCase().includes(pos));
         if (filtrados.length === 0) return null;

@@ -3,28 +3,22 @@ import axios from 'axios';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login } = useUser(); // Sacamos la función para guardar al usuario
+    const { login } = useUser();
     const navigate = useNavigate();
 
     const handleLogin = (e) => {
         e.preventDefault();
-        // Llamamos a la API
-        axios.post('http://localhost:5000/api/login', { email, password })
+        axios.post(`${API}/api/login`, { email, password })
             .then(res => {
                 const { user, token } = res.data;
-
-                // 1. Guardamos el token en localStorage
                 localStorage.setItem('token_fc_canaveral', token);
-
-                // 2. Ejecutamos la función login pasando solo los datos del usuario
-                login(user); 
-
+                login(user);
                 alert(`¡Bienvenido de nuevo, ${user.username}!`);
-                
-                // 3. Redirección: si es admin, al dashboard.
                 if (user.rol === 'admin') {
                     navigate('/admin');
                 } else {

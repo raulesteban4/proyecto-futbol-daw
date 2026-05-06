@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './Home.css'; // Crearemos este archivo CSS
+import './Home.css';
+
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 function Home() {
     const [partidos, setPartidos] = useState([]);
@@ -11,20 +13,19 @@ function Home() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Cargar datos al montar el componente
         const cargarDatos = async () => {
             try {
                 const [partidosRes, clasifRes, prodRes, jugRes] = await Promise.all([
-                    axios.get('http://localhost:5000/api/partidos'),
-                    axios.get('http://localhost:5000/api/clasificacion'),
-                    axios.get('http://localhost:5000/api/productos'),
-                    axios.get('http://localhost:5000/api/jugadores')
+                    axios.get(`${API}/api/partidos`),
+                    axios.get(`${API}/api/clasificacion`),
+                    axios.get(`${API}/api/productos`),
+                    axios.get(`${API}/api/jugadores`)
                 ]);
 
-                setPartidos(partidosRes.data.slice(0, 3)); // Solo los próximos 3 partidos
-                setClasificacion(clasifRes.data.slice(0, 5)); // Top 5 de la clasificación
-                setProductos(prodRes.data.slice(0, 4)); // 4 productos destacados
-                setJugadores(jugRes.data.slice(0, 6)); // 6 jugadores destacados
+                setPartidos(partidosRes.data.slice(0, 3));
+                setClasificacion(clasifRes.data.slice(0, 5));
+                setProductos(prodRes.data.slice(0, 4));
+                setJugadores(jugRes.data.slice(0, 6));
             } catch (error) {
                 console.error('Error cargando datos:', error);
             }
@@ -35,7 +36,6 @@ function Home() {
 
     return (
         <div className="home-container">
-            {/* HERO SECTION */}
             <section className="hero-section">
                 <div className="hero-content">
                     <h1 className="hero-title">¡Bienvenido al FC Cañaveral!</h1>
@@ -54,7 +54,6 @@ function Home() {
                 </div>
             </section>
 
-            {/* PRÓXIMOS PARTIDOS */}
             <section className="section partidos-section">
                 <h2 className="section-title">Próximos Partidos</h2>
                 <div className="partidos-grid">
@@ -82,7 +81,6 @@ function Home() {
                 </button>
             </section>
 
-            {/* CLASIFICACIÓN */}
             <section className="section clasificacion-section">
                 <h2 className="section-title">Clasificación</h2>
                 <div className="clasificacion-table">
@@ -103,7 +101,6 @@ function Home() {
                 </div>
             </section>
 
-            {/* JUGADORES DESTACADOS */}
             <section className="section jugadores-section">
                 <h2 className="section-title">Nuestra Plantilla</h2>
                 <div className="jugadores-grid">
@@ -124,7 +121,6 @@ function Home() {
                 </button>
             </section>
 
-            {/* TIENDA DESTACADA */}
             <section className="section tienda-section">
                 <h2 className="section-title">Tienda Oficial</h2>
                 <div className="productos-grid">
@@ -145,7 +141,6 @@ function Home() {
                 </button>
             </section>
 
-            {/* ESTADÍSTICAS RÁPIDAS */}
             <section className="section stats-section">
                 <h2 className="section-title">Estadísticas del Club</h2>
                 <div className="stats-grid">

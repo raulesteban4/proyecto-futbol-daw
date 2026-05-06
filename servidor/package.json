@@ -15,7 +15,6 @@
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "mysql2": "^3.18.2",
     "pg": "^8.20.0"
   },
   "devDependencies": {

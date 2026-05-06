@@ -2,15 +2,17 @@ import { useEffect, useState, Fragment } from 'react';
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function Perfil() {
     const { user } = useUser();
     const [pedidos, setPedidos] = useState([]);
-    const [detallesVisibles, setDetallesVisibles] = useState({}); // Para controlar qué pedido está abierto
+    const [detallesVisibles, setDetallesVisibles] = useState({});
 
     useEffect(() => {
         if (user && user.id) {
             const token = localStorage.getItem('token_fc_canaveral');
-            axios.get(`http://localhost:5000/api/pedidos/${user.id}`, {
+            axios.get(`${API}/api/pedidos/${user.id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -21,13 +23,11 @@ function Perfil() {
     }, [user]);
 
     const verDetalles = (orderId) => {
-        // Si ya tenemos los detalles cargados, solo cerramos/abrimos el desplegable
         if (detallesVisibles[orderId]) {
             setDetallesVisibles({ ...detallesVisibles, [orderId]: null });
         } else {
-            // Si no, los pedimos al servidor
             const token = localStorage.getItem('token_fc_canaveral');
-            axios.get(`http://localhost:5000/api/pedidos/detalles/${orderId}`, {
+            axios.get(`${API}/api/pedidos/detalles/${orderId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -87,7 +87,6 @@ function Perfil() {
                                         </button>
                                     </td>
                                 </tr>
-                                {/* Desplegable de productos */}
                                 {detallesVisibles[p.id] && (
                                     <tr>
                                         <td colSpan="5" style={{ backgroundColor: '#fdfdfd', padding: '15px', borderLeft: '4px solid #1e3a8a' }}>

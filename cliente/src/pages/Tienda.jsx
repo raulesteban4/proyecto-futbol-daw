@@ -3,12 +3,14 @@ import axios from 'axios';
 import './Tienda.css';
 import { useCart } from '../context/CartContext';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function Tienda() {
     const { cart, addToCart } = useCart();
     const [productos, setProductos] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/productos')
+        axios.get(`${API}/api/productos`)
             .then(res => setProductos(res.data))
             .catch(err => console.error(err));
     }, []);
@@ -18,11 +20,8 @@ function Tienda() {
             <h1 className="titulo-seccion">Tienda Oficial</h1>
             <div className="productos-grid">
                 {productos.map(p => {
-                    // 1. Calculamos cuánto de este producto hay ya en el carrito
                     const itemEnCarrito = cart?.find(item => item.id === p.id);
                     const cantidadEnCarrito = itemEnCarrito ? itemEnCarrito.quantity : 0;
-
-                    // 2. Calculamos el stock "real" disponible para el usuario en este momento
                     const stockRealDisponible = p.stock - cantidadEnCarrito;
 
                     return (
@@ -44,7 +43,6 @@ function Tienda() {
                                 <p style={{ fontSize: '0.8rem', color: '#64748b' }}>{p.descripcion}</p>
                                 <p className="producto-precio">{p.precio}€</p>
 
-                                {/* Indicador de stock dinámico */}
                                 <p style={{
                                     fontSize: '0.85rem',
                                     fontWeight: 'bold',
@@ -59,7 +57,6 @@ function Tienda() {
                                 <button
                                     className="btn-comprar"
                                     onClick={() => addToCart(p)}
-                                    // Bloqueamos el botón si no hay stock físico o si el usuario ya alcanzó el límite en su carrito
                                     disabled={stockRealDisponible <= 0}
                                     style={{
                                         backgroundColor: stockRealDisponible <= 0 ? '#94a3b8' : '#002d72',

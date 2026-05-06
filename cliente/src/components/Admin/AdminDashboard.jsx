@@ -7,6 +7,8 @@ import ClasificacionTab from './Tabs/ClasificacionTab';
 import TiendaTab from './Tabs/TiendaTab';
 import VentasTab from './Tabs/VentasTab';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function AdminDashboard() {
     const [tab, setTab] = useState('jugadores');
     const [data, setData] = useState([]);
@@ -19,16 +21,15 @@ function AdminDashboard() {
         pedidosPendientes: 0
     });
 
-    // Cargar datos según la pestaña activa
     const cargarDatos = () => {
         const token = localStorage.getItem('token_fc_canaveral');
         let url = '';
         
-        if (tab === 'jugadores') url = 'http://localhost:5000/api/jugadores';
-        if (tab === 'partidos') url = 'http://localhost:5000/api/partidos';
-        if (tab === 'clasificacion') url = 'http://localhost:5000/api/clasificacion';
-        if (tab === 'tienda') url = 'http://localhost:5000/api/productos';
-        if (tab === 'ventas') url = 'http://localhost:5000/api/admin/ventas';
+        if (tab === 'jugadores') url = `${API}/api/jugadores`;
+        if (tab === 'partidos') url = `${API}/api/partidos`;
+        if (tab === 'clasificacion') url = `${API}/api/clasificacion`;
+        if (tab === 'tienda') url = `${API}/api/productos`;
+        if (tab === 'ventas') url = `${API}/api/admin/ventas`;
 
         axios.get(url, {
             headers: {
@@ -48,8 +49,7 @@ function AdminDashboard() {
 
     const cargarStats = () => {
         const token = localStorage.getItem('token_fc_canaveral');
-
-        axios.get('http://localhost:5000/api/admin/stats', {
+        axios.get(`${API}/api/admin/stats`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -70,7 +70,6 @@ function AdminDashboard() {
         <div className="admin-container">
             <h1 className="admin-title">Panel de Control - FC Cañaveral</h1>
 
-            {/* MENÚ DE PESTAÑAS */}
             <div className="admin-tabs">
                 <button onClick={() => setTab('jugadores')} className={`admin-tab-button ${tab === 'jugadores' ? 'active' : ''}`}>Plantilla</button>
                 <button onClick={() => setTab('partidos')} className={`admin-tab-button ${tab === 'partidos' ? 'active' : ''}`}>Partidos</button>
@@ -80,7 +79,6 @@ function AdminDashboard() {
             </div>
 
             <div className="admin-content">
-                {/* CONTENIDO SEGÚN PESTAÑA */}
                 {tab === 'jugadores' && <PlantillaTab data={data} setData={setData} />}
                 {tab === 'partidos' && <PartidosTab data={data} setData={setData} />}
                 {tab === 'clasificacion' && <ClasificacionTab data={data} setData={setData} />}

@@ -2,10 +2,11 @@ import axios from 'axios';
 import './tabs.css';
 
 function ClasificacionTab({ data, setData }) {
+    const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
     const cargarDatos = () => {
         const token = localStorage.getItem('token_fc_canaveral');
-        axios.get('http://localhost:5000/api/clasificacion', {
+        axios.get(`${API}/api/clasificacion`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(res => setData(res.data))
@@ -25,7 +26,7 @@ function ClasificacionTab({ data, setData }) {
                         puntos: e.target.puntos.value || 0,
                         posicion: e.target.posicion.value || 0
                     };
-                    axios.post('http://localhost:5000/api/admin/ranking', nuevoE, {
+                    axios.post(`${API}/api/admin/ranking`, nuevoE, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     }).then(() => {
                         alert("Equipo añadido correctamente");
@@ -76,7 +77,7 @@ function ClasificacionTab({ data, setData }) {
                                             puntos: document.getElementById(`pts-${e.id}`).value,
                                             posicion: document.getElementById(`pos-${e.id}`).value
                                         };
-                                        axios.put(`http://localhost:5000/api/admin/ranking/${e.id}`, actualizado, {
+                                        axios.put(`${API}/api/admin/ranking/${e.id}`, actualizado, {
                                             headers: { 'Authorization': `Bearer ${token}` }
                                         }).then(() => {
                                             alert("Clasificación actualizada");
@@ -87,7 +88,7 @@ function ClasificacionTab({ data, setData }) {
                                     <button onClick={() => {
                                         if (window.confirm(`¿Seguro que quieres eliminar a ${e.equipo}?`)) {
                                             const token = localStorage.getItem('token_fc_canaveral');
-                                            axios.delete(`http://localhost:5000/api/admin/ranking/${e.id}`, {
+                                            axios.delete(`${API}/api/admin/ranking/${e.id}`, {
                                                 headers: { 'Authorization': `Bearer ${token}` }
                                             }).then(() => cargarDatos());
                                         }

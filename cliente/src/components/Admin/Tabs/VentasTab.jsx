@@ -3,12 +3,13 @@ import axios from 'axios';
 import './tabs.css';
 
 function VentasTab({ data, setData, stats }) {
+    const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     const [busqueda, setBusqueda] = useState('');
     const [soloPendientes, setSoloPendientes] = useState(false);
 
     const cargarDatos = () => {
         const token = localStorage.getItem('token_fc_canaveral');
-        axios.get('http://localhost:5000/api/admin/ventas', {
+        axios.get(`${API}/api/admin/ventas`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(res => setData(res.data))
@@ -156,7 +157,7 @@ function VentasTab({ data, setData, stats }) {
                                             <button
                                                 onClick={() => {
                                                     const token = localStorage.getItem('token_fc_canaveral');
-                                                    axios.put(`http://localhost:5000/api/admin/ventas/${v.id}`, { estado: 'Enviado' }, {
+                                                    axios.put(`${API}/api/admin/ventas/${v.id}`, { estado: 'Enviado' }, {
                                                         headers: { 'Authorization': `Bearer ${token}` }
                                                     })
                                                         .then(() => {

@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './tabs.css';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function PlantillaTab({ data, setData }) {
 
     const cargarDatos = () => {
         const token = localStorage.getItem('token_fc_canaveral');
-        axios.get('http://localhost:5000/api/jugadores', {
+        axios.get(`${API}/api/jugadores`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(res => setData(res.data))
@@ -26,7 +28,7 @@ function PlantillaTab({ data, setData }) {
                     team_id: 1
                 };
 
-                axios.post('http://localhost:5000/api/jugadores', nuevo, {
+                axios.post(`${API}/api/jugadores`, nuevo, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
                     .then(() => {
@@ -99,7 +101,7 @@ function PlantillaTab({ data, setData }) {
                                         amarillas: document.getElementById(`am-${j.id}`).value,
                                         rojas: document.getElementById(`rj-${j.id}`).value
                                     };
-                                    axios.put(`http://localhost:5000/api/admin/jugadores/stats/${j.id}`, datosActualizados, {
+                                    axios.put(`${API}/api/admin/jugadores/stats/${j.id}`, datosActualizados, {
                                         headers: { 'Authorization': `Bearer ${token}` }
                                     })
                                         .then(() => {
@@ -117,7 +119,7 @@ function PlantillaTab({ data, setData }) {
                                 <button onClick={() => {
                                     if (window.confirm("¿Dar de baja?")) {
                                         const token = localStorage.getItem('token_fc_canaveral');
-                                        axios.delete(`http://localhost:5000/api/jugadores/${j.id}`, {
+                                        axios.delete(`${API}/api/jugadores/${j.id}`, {
                                             headers: { 'Authorization': `Bearer ${token}` }
                                         }).then(() => cargarDatos());
                                     }

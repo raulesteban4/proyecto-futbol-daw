@@ -1,29 +1,28 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function Competicion() {
     const [partidos, setPartidos] = useState([]);
     const [clasificacion, setClasificacion] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/partidos').then(res => setPartidos(res.data));
-        axios.get('http://localhost:5000/api/clasificacion').then(res => setClasificacion(res.data));
+        axios.get(`${API}/api/partidos`).then(res => setPartidos(res.data));
+        axios.get(`${API}/api/clasificacion`).then(res => setClasificacion(res.data));
     }, []);
 
-    // Separamos los partidos para mostrarlos en secciones distintas
     const partidosJugados = partidos.filter(m => m.jugado).reverse();
     const proximosPartidos = partidos.filter(m => m.jugado === 0 || !m.jugado);
 
     return (
         <div style={{ display: 'flex', gap: '40px', padding: '40px', flexWrap: 'wrap', justifyContent: 'center', backgroundColor: '#f3f4f6', minHeight: '100vh' }}>
             
-            {/* SECCIÓN CALENDARIO */}
             <div style={{ flex: '1', maxWidth: '600px' }}>
                 <h2 style={{ color: '#1e3a8a', borderBottom: '3px solid #1e3a8a', marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
                     Calendario
                 </h2>
 
-                {/* Próximos */}
                 <h3 style={{ color: '#64748b', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>Siguientes Encuentros</h3>
                 {proximosPartidos.map(m => (
                     <div key={m.id} style={cardStyle}>
@@ -38,7 +37,6 @@ function Competicion() {
                     </div>
                 ))}
 
-                {/* Resultados Pasados */}
                 <h3 style={{ color: '#64748b', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '30px' }}>Resultados Recientes</h3>
                 {partidosJugados.map(m => (
                     <div key={m.id} style={{ ...cardStyle, opacity: 0.9 }}>
@@ -54,7 +52,6 @@ function Competicion() {
                 ))}
             </div>
 
-            {/* SECCIÓN CLASIFICACIÓN */}
             <div style={{ width: '100%', maxWidth: '400px' }}>
                 <h2 style={{ color: '#1e3a8a', borderBottom: '3px solid #1e3a8a', marginBottom: '20px' }}>Clasificación</h2>
                 <div style={{ backgroundColor: 'white', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
@@ -92,7 +89,6 @@ function Competicion() {
     );
 }
 
-// ESTILOS EN OBJETOS PARA LIMPIEZA
 const cardStyle = {
     backgroundColor: 'white',
     padding: '20px',

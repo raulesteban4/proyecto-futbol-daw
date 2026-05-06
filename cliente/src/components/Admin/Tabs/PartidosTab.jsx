@@ -2,10 +2,11 @@ import axios from 'axios';
 import './tabs.css';
 
 function PartidosTab({ data, setData }) {
+    const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
     const cargarDatos = () => {
         const token = localStorage.getItem('token_fc_canaveral');
-        axios.get('http://localhost:5000/api/partidos', {
+        axios.get(`${API}/api/partidos`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(res => setData(res.data))
@@ -27,7 +28,7 @@ function PartidosTab({ data, setData }) {
                         goles_visitante: 0,
                         jugado: false
                     };
-                    axios.post('http://localhost:5000/api/admin/partidos', nuevoP, {
+                    axios.post(`${API}/api/admin/partidos`, nuevoP, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     }).then(() => {
                         alert("Partido añadido correctamente");
@@ -85,7 +86,7 @@ function PartidosTab({ data, setData }) {
                                         goles_visitante: document.getElementById(`gv-${m.id}`).value,
                                         jugado: true
                                     };
-                                    axios.put(`http://localhost:5000/api/admin/partidos/${m.id}`, actualizado, {
+                                    axios.put(`${API}/api/admin/partidos/${m.id}`, actualizado, {
                                         headers: { 'Authorization': `Bearer ${token}` }
                                     }).then(() => {
                                         alert("Partido actualizado");
@@ -96,7 +97,7 @@ function PartidosTab({ data, setData }) {
                                 <button onClick={() => {
                                     if (window.confirm("¿Eliminar partido?")) {
                                         const token = localStorage.getItem('token_fc_canaveral');
-                                        axios.delete(`http://localhost:5000/api/admin/partidos/${m.id}`, {
+                                        axios.delete(`${API}/api/admin/partidos/${m.id}`, {
                                             headers: { 'Authorization': `Bearer ${token}` }
                                         }).then(() => cargarDatos());
                                     }

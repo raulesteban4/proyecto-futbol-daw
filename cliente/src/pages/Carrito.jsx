@@ -4,16 +4,16 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Carrito.css';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function Carrito() {
     const { cart, removeFromCart, clearCart } = useCart();
     const { user } = useUser();
     const navigate = useNavigate();
 
-    // Calcular el precio total de la compra
     const total = cart.reduce((acc, item) => acc + (item.precio * item.quantity), 0);
 
     const handleFinalizarCompra = () => {
-        // 1. Verificar si el usuario está logueado
         if (!user) {
             alert("⚠️ Debes iniciar sesión para realizar un pedido.");
             navigate('/login');
@@ -22,11 +22,10 @@ function Carrito() {
 
         const token = localStorage.getItem('token_fc_canaveral');
 
-        // 2. Enviar el pedido al servidor (Backend)
-        axios.post('http://localhost:5000/api/pedidos', {
+        axios.post(`${API}/api/pedidos`, {
             user_id: user.id,
             total: total.toFixed(2),
-            productos: cart // <--- Enviamos todo el array de productos
+            productos: cart
         }, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -40,7 +39,7 @@ function Carrito() {
                         productos: cart
                     }
                 });
-                clearCart(); // 3. Vaciar el carrito
+                clearCart();
             })
             .catch(err => {
                 console.error(err);
