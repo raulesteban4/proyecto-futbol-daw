@@ -248,34 +248,6 @@ function Home() {
                     ))}
                 </div>
             </section>
-
-            {/* CTA */}
-            <section className="cta-section">
-                <div className="cta-content">
-                    <h2>¿Listo para ser parte del FC Cañaveral?</h2>
-                    <p>Únete a nuestra comunidad, compra merchandising oficial y sigue cada partido de cerca.</p>
-                    <div className="cta-actions">
-                        <button onClick={() => navigate('/registro')} className="cta-btn cta-btn--primary">Crear Cuenta</button>
-                        <button onClick={() => navigate('/login')} className="cta-btn cta-btn--outline">Iniciar Sesión</button>
-                    </div>
-                </div>
-            </section>
-
-            {/* FOOTER */}
-            <footer className="home-footer">
-                <div className="home-footer__inner">
-                    <div className="home-footer__brand">
-                        <strong>FC Cañaveral</strong>
-                        <p>El club de fútbol que une a la comunidad</p>
-                    </div>
-                    <div className="home-footer__links">
-                        <button onClick={() => navigate('/competicion')}>Competición</button>
-                        <button onClick={() => navigate('/plantilla')}>Plantilla</button>
-                        <button onClick={() => navigate('/tienda')}>Tienda</button>
-                    </div>
-                    <p className="home-footer__copy">© 2026 FC Cañaveral. Todos los derechos reservados.</p>
-                </div>
-            </footer>
         </div>
     );
 }
