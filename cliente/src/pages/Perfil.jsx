@@ -52,7 +52,7 @@ function Perfil() {
             ) : (
                 <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse' }}>
                     <thead>
-                        <tr style={{ backgroundColor: '#f4f4f4' }}>
+                        <tr style={{ background: 'linear-gradient(135deg, #1e3a8a, #2563eb)', color: 'white' }}>
                             <th style={{ padding: '12px', textAlign: 'left' }}>ID</th>
                             <th style={{ padding: '12px', textAlign: 'left' }}>Fecha</th>
                             <th style={{ padding: '12px', textAlign: 'left' }}>Total</th>
