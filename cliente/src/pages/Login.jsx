@@ -9,17 +9,18 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const { login } = useUser();
     const navigate = useNavigate();
 
     const handleLogin = (e) => {
         e.preventDefault();
+        setError('');
         axios.post(`${API}/api/login`, { email, password })
             .then(res => {
                 const { user, token } = res.data;
                 localStorage.setItem('token_fc_canaveral', token);
                 login(user);
-                alert(`¡Bienvenido de nuevo, ${user.username}!`);
                 if (user.rol === 'admin') {
                     navigate('/admin');
                 } else {
@@ -28,9 +29,9 @@ function Login() {
             })
             .catch(err => {
                 if (err.response && err.response.status === 401) {
-                    alert("Correo o contraseña incorrectos");
+                    setError('Correo o contraseña incorrectos');
                 } else {
-                    alert("Error al conectar con el servidor");
+                    setError('Error al conectar con el servidor');
                 }
                 console.error(err);
             });
@@ -40,6 +41,7 @@ function Login() {
         <div className="auth-wrapper">
             <div className="auth-card">
                 <h2>Iniciar Sesión</h2>
+                {error && <p className="auth-error">{error}</p>}
                 <form onSubmit={handleLogin} className="auth-form">
                     <div className="auth-field">
                         <label>Correo Electrónico:</label>
