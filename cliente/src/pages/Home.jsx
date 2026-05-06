@@ -118,35 +118,53 @@ function Home() {
             </section>
 
             {/* NEXT MATCH */}
-            {proximosPartidos.length > 0 && (
-                <section className="next-match">
-                    <div className="next-match__inner">
-                        <span className="next-match__label">
-                            <span className="pulse-dot"></span>
-                            Próximo Partido
-                        </span>
-                        <div className="next-match__teams">
-                            <div className="next-match__team next-match__team--home">
-                                <span className="next-match__team-name">FC Cañaveral</span>
+            {proximosPartidos.length > 0 && (() => {
+                const match = proximosPartidos[0];
+                const matchDate = new Date(match.fecha);
+                const kickOffTime = matchDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                const matchDay = matchDate.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+
+                return (
+                    <section className="next-match">
+                        <div className="next-match__inner">
+                            <div className="next-match__header">
+                                <span className="next-match__badge-live">
+                                    <span className="pulse-dot"></span>
+                                    Próximo Partido
+                                </span>
+                                <span className="next-match__date-full">{matchDay}</span>
                             </div>
-                            <div className="next-match__vs">
-                                <span className="next-match__date">{formatDate(proximosPartidos[0].fecha)}</span>
-                                <span className="next-match__badge">VS</span>
+                            <div className="next-match__matchup">
+                                <div className="next-match__team next-match__team--home">
+                                    <div className="next-match__shield next-match__shield--home">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L3 7v5c0 5.25 3.75 10.09 9 11.25C17.25 22.09 21 17.25 21 12V7l-9-5z"/></svg>
+                                    </div>
+                                    <span className="next-match__team-name">FC Cañaveral</span>
+                                </div>
+                                <div className="next-match__vs-block">
+                                    <span className="next-match__time">{kickOffTime}</span>
+                                    <span className="next-match__vs-text">vs</span>
+                                </div>
+                                <div className="next-match__team next-match__team--away">
+                                    <div className="next-match__shield next-match__shield--away">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+                                    </div>
+                                    <span className="next-match__team-name">{match.rival}</span>
+                                </div>
                             </div>
-                            <div className="next-match__team next-match__team--away">
-                                <span className="next-match__team-name">{proximosPartidos[0].rival}</span>
+                            <div className="next-match__footer">
+                                <span className="next-match__location">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    {match.ubicacion}
+                                </span>
+                                <button onClick={() => navigate('/competicion')} className="next-match__btn">
+                                    Ver Calendario
+                                </button>
                             </div>
                         </div>
-                        <span className="next-match__location">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                            {proximosPartidos[0].ubicacion}
-                        </span>
-                        <button onClick={() => navigate('/competicion')} className="next-match__btn">
-                            Ver Calendario
-                        </button>
-                    </div>
-                </section>
-            )}
+                    </section>
+                );
+            })()}
 
             {/* RESULTS */}
             <section className="section section--matches">
