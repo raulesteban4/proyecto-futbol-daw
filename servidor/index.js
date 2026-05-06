@@ -356,15 +356,18 @@ app.get('/api/admin/stats', verificarToken, (req, res) => {
             (SELECT SUM(total) FROM orders) as "totalRecaudado",
             (SELECT COUNT(*) FROM orders) as "totalPedidos",
             (SELECT COUNT(*) FROM products WHERE stock < 5) as "stockBajo",
-            (SELECT COUNT(*) FROM orders WHERE LOWER(estado) = 'pendiente' OR estado IS NULL) as "pedidosPendientes",
-            (SELECT COUNT(*) FROM orders WHERE LOWER(estado) = 'enviado') as "pedidosEnviados",
+            (SELECT COUNT(*) FROM orders WHERE estado::text = 'pendiente' OR estado IS NULL) as "pedidosPendientes",
+            (SELECT COUNT(*) FROM orders WHERE estado::text = 'enviado') as "pedidosEnviados",
             (SELECT p.nombre FROM order_items oi 
              JOIN products p ON oi.product_id = p.id 
              GROUP BY oi.product_id, p.nombre 
              ORDER BY SUM(oi.cantidad) DESC LIMIT 1) as "productoEstrella"
     `;
     pool.query(sql, (err, result) => {
-        if (err) return res.status(500).send(err);
+        if (err) {
+            console.error('Error en stats:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.json(result.rows[0] || {});
     });
 });
