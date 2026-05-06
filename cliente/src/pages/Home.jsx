@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import escudo from '../assets/FC CAÑAVERAL escudo.avif';
 import './Home.css';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -55,13 +56,19 @@ function Home() {
     }
 
     const canaveralInfo = clasificacion.find(c => c.equipo === 'FC Cañaveral');
+    const partidosJugados = partidos.filter(p => p.jugado).length;
+    const golesFavor = partidos.filter(p => p.jugado).reduce((sum, p) => sum + p.goles_local, 0);
 
     return (
         <div className="home">
             {/* HERO */}
             <section className="hero">
                 <div className="hero-bg"></div>
+                <div className="hero-pattern"></div>
                 <div className="hero-content">
+                    <div className="hero-escudo">
+                        <img src={escudo} alt="FC Cañaveral" />
+                    </div>
                     <span className="hero-badge">Temporada 2025/26</span>
                     <h1 className="hero-title">FC Cañaveral</h1>
                     <p className="hero-subtitle">Pasión, esfuerzo y comunidad. El club que nos une.</p>
@@ -76,14 +83,13 @@ function Home() {
                         </button>
                     </div>
 
-                    {/* Quick Stats Bar */}
                     <div className="hero-stats">
                         <div className="hero-stat">
                             <span className="hero-stat__value">{jugadores.length}</span>
                             <span className="hero-stat__label">Jugadores</span>
                         </div>
                         <div className="hero-stat">
-                            <span className="hero-stat__value">{partidos.filter(p => p.jugado).length}</span>
+                            <span className="hero-stat__value">{partidosJugados}</span>
                             <span className="hero-stat__label">Partidos</span>
                         </div>
                         <div className="hero-stat">
@@ -96,26 +102,37 @@ function Home() {
                         </div>
                     </div>
                 </div>
+                <div className="hero-wave">
+                    <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+                        <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="var(--bg-body)" />
+                    </svg>
+                </div>
             </section>
 
-            {/* NEXT MATCH HIGHLIGHT */}
+            {/* NEXT MATCH */}
             {proximosPartidos.length > 0 && (
                 <section className="next-match">
                     <div className="next-match__inner">
-                        <span className="next-match__label">Próximo Partido</span>
+                        <span className="next-match__label">
+                            <span className="pulse-dot"></span>
+                            Próximo Partido
+                        </span>
                         <div className="next-match__teams">
                             <div className="next-match__team next-match__team--home">
                                 <span className="next-match__team-name">FC Cañaveral</span>
                             </div>
                             <div className="next-match__vs">
                                 <span className="next-match__date">{formatDate(proximosPartidos[0].fecha)}</span>
-                                <span className="next-match__time">VS</span>
+                                <span className="next-match__badge">VS</span>
                             </div>
                             <div className="next-match__team next-match__team--away">
                                 <span className="next-match__team-name">{proximosPartidos[0].rival}</span>
                             </div>
                         </div>
-                        <span className="next-match__location">📍 {proximosPartidos[0].ubicacion}</span>
+                        <span className="next-match__location">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            {proximosPartidos[0].ubicacion}
+                        </span>
                         <button onClick={() => navigate('/competicion')} className="next-match__btn">
                             Ver Calendario
                         </button>
@@ -123,34 +140,74 @@ function Home() {
                 </section>
             )}
 
-            {/* MATCHES SECTION */}
+            {/* STATS BAR */}
+            <section className="stats-bar">
+                <div className="stats-bar__inner">
+                    <div className="stat-item">
+                        <span className="stat-item__icon">⚽</span>
+                        <div>
+                            <span className="stat-item__value">{golesFavor}</span>
+                            <span className="stat-item__label">Goles a favor</span>
+                        </div>
+                    </div>
+                    <div className="stat-item stat-item--divider"></div>
+                    <div className="stat-item">
+                        <span className="stat-item__icon">🏆</span>
+                        <div>
+                            <span className="stat-item__value">{resultadosRecientes.filter(m => m.goles_local > m.goles_visitante).length}</span>
+                            <span className="stat-item__label">Victorias</span>
+                        </div>
+                    </div>
+                    <div className="stat-item stat-item--divider"></div>
+                    <div className="stat-item">
+                        <span className="stat-item__icon">👥</span>
+                        <div>
+                            <span className="stat-item__value">{jugadores.length}</span>
+                            <span className="stat-item__label">Plantilla</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* RESULTS */}
             <section className="section section--matches">
                 <div className="section__header">
-                    <h2 className="section__title">Resultados Recientes</h2>
+                    <h2 className="section__title">
+                        <span className="section__icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+                        </span>
+                        Resultados Recientes
+                    </h2>
                     <button onClick={() => navigate('/competicion')} className="section__link">Ver todos →</button>
                 </div>
                 <div className="matches-list">
-                    {resultadosRecientes.length > 0 ? resultadosRecientes.map(m => (
-                        <div key={m.id} className="match-row">
-                            <div className="match-row__info">
-                                <span className="match-row__date">{formatDate(m.fecha)}</span>
-                                <span className="match-row__location">📍 {m.ubicacion}</span>
+                    {resultadosRecientes.length > 0 ? resultadosRecientes.map(m => {
+                        const resultado = m.goles_local > m.goles_visitante ? 'W' : m.goles_local < m.goles_visitante ? 'L' : 'D';
+                        return (
+                            <div key={m.id} className="match-row">
+                                <div className={`match-row__indicator match-row__indicator--${resultado}`}>{resultado}</div>
+                                <div className="match-row__content">
+                                    <div className="match-row__meta">
+                                        <span className="match-row__date">{formatDate(m.fecha)}</span>
+                                        <span className="match-row__location">{m.ubicacion}</span>
+                                    </div>
+                                    <div className="match-row__teams">
+                                        <span className="match-row__team match-row__team--home">FC Cañaveral</span>
+                                        <span className="match-row__score">
+                                            <span className={`match-row__score-num ${m.goles_local > m.goles_visitante ? 'win' : m.goles_local < m.goles_visitante ? 'lose' : ''}`}>
+                                                {m.goles_local}
+                                            </span>
+                                            <span className="match-row__score-sep">:</span>
+                                            <span className={`match-row__score-num ${m.goles_visitante > m.goles_local ? 'win' : m.goles_visitante < m.goles_local ? 'lose' : ''}`}>
+                                                {m.goles_visitante}
+                                            </span>
+                                        </span>
+                                        <span className="match-row__team match-row__team--away">{m.rival}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="match-row__teams">
-                                <span className="match-row__team match-row__team--home">FC Cañaveral</span>
-                                <span className="match-row__score">
-                                    <span className={`match-row__score-num ${m.goles_local > m.goles_visitante ? 'win' : m.goles_local < m.goles_visitante ? 'lose' : ''}`}>
-                                        {m.goles_local}
-                                    </span>
-                                    <span className="match-row__score-sep">-</span>
-                                    <span className={`match-row__score-num ${m.goles_visitante > m.goles_local ? 'win' : m.goles_visitante < m.goles_local ? 'lose' : ''}`}>
-                                        {m.goles_visitante}
-                                    </span>
-                                </span>
-                                <span className="match-row__team match-row__team--away">{m.rival}</span>
-                            </div>
-                        </div>
-                    )) : (
+                        );
+                    }) : (
                         <div className="empty-state">No hay resultados disponibles</div>
                     )}
                 </div>
@@ -159,7 +216,12 @@ function Home() {
             {/* STANDINGS */}
             <section className="section section--standings">
                 <div className="section__header">
-                    <h2 className="section__title">Clasificación</h2>
+                    <h2 className="section__title">
+                        <span className="section__icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/></svg>
+                        </span>
+                        Clasificación
+                    </h2>
                     <button onClick={() => navigate('/competicion')} className="section__link">Ver completa →</button>
                 </div>
                 <div className="standings-card">
@@ -167,7 +229,7 @@ function Home() {
                         <thead>
                             <tr>
                                 <th className="standings-table__th standings-table__th--pos">#</th>
-                                <th className="standings-table__th standings-table__th--team">Equipo</th>
+                                <th className="standings-table__th">Equipo</th>
                                 <th className="standings-table__th standings-table__th--pj">PJ</th>
                                 <th className="standings-table__th standings-table__th--pts">Pts</th>
                             </tr>
@@ -198,7 +260,12 @@ function Home() {
             {/* PLAYERS */}
             <section className="section section--players">
                 <div className="section__header">
-                    <h2 className="section__title">Plantilla Destacada</h2>
+                    <h2 className="section__title">
+                        <span className="section__icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                        </span>
+                        Plantilla Destacada
+                    </h2>
                     <button onClick={() => navigate('/plantilla')} className="section__link">Ver todos →</button>
                 </div>
                 <div className="players-grid">
@@ -227,7 +294,12 @@ function Home() {
             {/* STORE */}
             <section className="section section--store">
                 <div className="section__header">
-                    <h2 className="section__title">Tienda Oficial</h2>
+                    <h2 className="section__title">
+                        <span className="section__icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                        </span>
+                        Tienda Oficial
+                    </h2>
                     <button onClick={() => navigate('/tienda')} className="section__link">Ir a la tienda →</button>
                 </div>
                 <div className="store-grid">
