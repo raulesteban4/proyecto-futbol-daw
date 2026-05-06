@@ -157,7 +157,7 @@ function VentasTab({ data, setData, stats }) {
                                             <button
                                                 onClick={() => {
                                                     const token = localStorage.getItem('token_fc_canaveral');
-                                                    axios.put(`${API}/api/admin/ventas/${v.id}`, { estado: 'Enviado' }, {
+                                                    axios.put(`${API}/api/admin/ventas/${v.id}`, { estado: 'enviado' }, {
                                                         headers: { 'Authorization': `Bearer ${token}` }
                                                     })
                                                         .then(() => {
