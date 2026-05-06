@@ -10,7 +10,6 @@ function Home() {
     const [clasificacion, setClasificacion] = useState([]);
     const [productos, setProductos] = useState([]);
     const [jugadores, setJugadores] = useState([]);
-    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,8 +28,6 @@ function Home() {
                 setJugadores(jugRes.data.slice(0, 6));
             } catch (error) {
                 console.error('Error cargando datos:', error);
-            } finally {
-                setLoading(false);
             }
         };
 
