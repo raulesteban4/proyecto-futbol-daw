@@ -161,3 +161,36 @@
     border-radius: 3px;
     font-size: 0.8rem;
 }
+
+.dark .squad-container {
+    background-color: #0f172a;
+}
+.dark .squad-header h1 {
+    color: #60a5fa;
+}
+.dark .player-card {
+    background: var(--bg-card);
+    border-color: var(--border-light);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+.dark .player-card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+.dark .player-name {
+    color: #f1f5f9;
+}
+.dark .player-pos {
+    color: #60a5fa;
+}
+.dark .player-stats {
+    background: #1e293b;
+}
+.dark .stat-value {
+    color: #f1f5f9;
+}
+.dark .stat-label {
+    color: #94a3b8;
+}
+.dark .section-title {
+    color: #94a3b8;
+}

@@ -368,3 +368,45 @@
         min-height: 60px;
     }
 }
+
+.dark .form-input {
+    background-color: #1e293b;
+    border-color: #334155;
+    color: #f1f5f9;
+}
+.dark .form-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+.dark .form-box {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+.dark .form-box h3 {
+    color: #60a5fa;
+}
+.dark .form-select {
+    background-color: #1e293b;
+    border-color: #334155;
+    color: #f1f5f9;
+}
+.dark .form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+.dark .admin-table thead {
+    background-color: #1e293b;
+    border-bottom-color: #334155;
+}
+.dark .admin-table td {
+    border-bottom-color: #334155;
+    color: #cbd5e1;
+}
+.dark .stat-input {
+    background-color: #1e293b;
+    border-color: #334155;
+    color: #f1f5f9;
+}
+.dark .text-muted {
+    color: #94a3b8;
+}

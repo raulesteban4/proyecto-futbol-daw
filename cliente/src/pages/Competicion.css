@@ -183,3 +183,47 @@
         padding: 16px;
     }
 }
+
+.dark .section-heading {
+    color: #60a5fa;
+    border-bottom-color: #60a5fa;
+}
+.dark .sub-heading {
+    color: #94a3b8;
+}
+.dark .match-card {
+    background-color: var(--bg-card);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-left-color: #3b82f6;
+}
+.dark .match-date {
+    color: #94a3b8;
+}
+.dark .match-teams {
+    color: #f1f5f9;
+}
+.dark .match-location {
+    color: #60a5fa;
+}
+.dark .vs-badge {
+    background-color: #1e293b;
+    color: #60a5fa;
+    border-color: #334155;
+}
+.dark .ranking-table-wrapper {
+    background-color: var(--bg-card);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+.dark .ranking-table td {
+    border-bottom-color: #334155;
+}
+.dark .ranking-table tr.highlight-row {
+    background-color: #1e3a8a;
+}
+.dark .muted-cell {
+    color: #94a3b8;
+}
+.dark .pos-badge.top-pos {
+    background-color: #78350f;
+    color: #fde68a;
+}

@@ -58,3 +58,22 @@
     font-size: 0.7rem;
     text-transform: uppercase;
 }
+
+.dark .tarjeta-producto {
+    background: var(--bg-card);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-light);
+}
+.dark .producto-precio {
+    color: #60a5fa;
+}
+.dark .btn-comprar {
+    background: #3b82f6;
+}
+.dark .btn-comprar:hover {
+    background: #2563eb;
+}
+.dark .categoria-tag {
+    background: #1e293b;
+    color: #94a3b8;
+}

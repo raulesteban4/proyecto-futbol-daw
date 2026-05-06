@@ -100,6 +100,18 @@
     border-bottom: none;
 }
 
+.dark .estado-pendiente {
+    background-color: #78350f;
+    color: #fde68a;
+}
+.dark .estado-enviado {
+    background-color: #14532d;
+    color: #86efac;
+}
+.dark .detalles-row td {
+    background-color: #1e293b;
+}
+
 @media (max-width: 600px) {
     .perfil-container {
         padding: 16px;

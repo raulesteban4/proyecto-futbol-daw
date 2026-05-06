@@ -37,3 +37,20 @@
     cursor: pointer;
     margin-top: 15px;
 }
+
+.dark .item-carrito {
+    background: var(--bg-card);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-light);
+}
+.dark .carrito-resumen {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+}
+.dark .btn-quitar {
+    background: #7f1d1d;
+    color: #fca5a5;
+}
+.dark .btn-pagar {
+    background: #3b82f6;
+}

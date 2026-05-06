@@ -115,3 +115,19 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 }
+
+.dark .admin-title {
+    color: #60a5fa;
+}
+.dark .admin-tab-button {
+    background-color: #1e293b;
+    color: #cbd5e1;
+}
+.dark .admin-tab-button.active {
+    background-color: #3b82f6;
+}
+.dark .admin-content {
+    background-color: var(--bg-card);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-light);
+}
