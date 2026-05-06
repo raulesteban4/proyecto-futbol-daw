@@ -11,6 +11,7 @@ function Home() {
     const [clasificacion, setClasificacion] = useState([]);
     const [productos, setProductos] = useState([]);
     const [jugadores, setJugadores] = useState([]);
+    const [totalJugadores, setTotalJugadores] = useState(0);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -24,15 +25,17 @@ function Home() {
                     axios.get(`${API}/api/jugadores`)
                 ]);
 
+                const allJugadores = jugRes.data.filter(j => j.team_id === 1);
+                setJugadores(
+                    allJugadores
+                        .sort((a, b) => ((b.goles || 0) + (b.asistencias || 0)) - ((a.goles || 0) + (a.asistencias || 0)))
+                        .slice(0, 6)
+                );
                 setPartidos(partidosRes.data);
                 setClasificacion(clasifRes.data);
                 setProductos(prodRes.data.filter(p => p.stock > 0));
 
-                const topJugadores = jugRes.data
-                    .filter(j => j.team_id === 1)
-                    .sort((a, b) => ((b.goles || 0) + (b.asistencias || 0)) - ((a.goles || 0) + (a.asistencias || 0)))
-                    .slice(0, 6);
-                setJugadores(topJugadores);
+                setTotalJugadores(allJugadores.length);
             } catch (error) {
                 console.error('Error cargando datos:', error);
             } finally {
@@ -90,7 +93,7 @@ function Home() {
 
                     <div className="hero-stats">
                         <div className="hero-stat">
-                            <span className="hero-stat__value">{jugadores.length}</span>
+                            <span className="hero-stat__value">{totalJugadores}</span>
                             <span className="hero-stat__label">Jugadores</span>
                         </div>
                         <div className="hero-stat">
