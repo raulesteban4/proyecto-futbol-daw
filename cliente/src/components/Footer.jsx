@@ -1,23 +1,22 @@
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/FC CAÑAVERAL escudo.avif';
 import './Footer.css';
-
-const links = [
-    { label: 'Inicio', path: '/' },
-    { label: 'Plantilla', path: '/plantilla' },
-    { label: 'Competición', path: '/competicion' },
-    { label: 'Tienda', path: '/tienda' },
-    { label: 'Carrito', path: '/carrito' },
-    { label: 'Perfil', path: '/perfil' },
-];
 
 function Footer() {
     const navigate = useNavigate();
+    const year = new Date().getFullYear();
+
+    const links = [
+        { label: 'Inicio', path: '/' },
+        { label: 'Plantilla', path: '/plantilla' },
+        { label: 'Competición', path: '/competicion' },
+        { label: 'Tienda', path: '/tienda' },
+        { label: 'Perfil', path: '/perfil' },
+    ];
 
     return (
         <footer className="footer">
             <div className="footer__inner">
-                <img src={logo} alt="" className="footer__logo" />
+                <span>© {year} FC Cañaveral</span>
                 <nav className="footer__nav">
                     {links.map(l => (
                         <button key={l.path} onClick={() => navigate(l.path)}>
@@ -25,7 +24,6 @@ function Footer() {
                         </button>
                     ))}
                 </nav>
-                <p className="footer__copy">© {new Date().getFullYear()} FC Cañaveral</p>
             </div>
         </footer>
     );
