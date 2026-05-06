@@ -1,0 +1,185 @@
+.competicion-container {
+    display: flex;
+    gap: 40px;
+    padding: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.competicion-col {
+    flex: 1;
+    max-width: 600px;
+}
+
+.ranking-col {
+    width: 100%;
+    max-width: 400px;
+}
+
+.section-heading {
+    color: #1e3a8a;
+    border-bottom: 3px solid #1e3a8a;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.sub-heading {
+    color: #64748b;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.match-card {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 5px solid #1e3a8a;
+}
+
+.match-card.played {
+    opacity: 0.9;
+}
+
+.match-info {
+    flex: 1;
+}
+
+.match-date {
+    font-size: 13px;
+    color: #64748b;
+    display: block;
+    margin-bottom: 5px;
+    text-transform: capitalize;
+}
+
+.match-teams {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 5px;
+}
+
+.vs-text {
+    color: #94a3b8;
+    font-weight: normal;
+}
+
+.match-location {
+    font-size: 13px;
+    color: #1e3a8a;
+    font-weight: 500;
+}
+
+.vs-badge {
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #f1f5f9;
+    color: #1e3a8a;
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+}
+
+.score-badge {
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #1e3a8a;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 8px;
+    min-width: 60px;
+    text-align: center;
+}
+
+.ranking-table-wrapper {
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ranking-table thead tr {
+    background-color: #1e3a8a;
+    color: white;
+}
+
+.ranking-table th {
+    padding: 15px 10px;
+}
+
+.ranking-table th:not(:first-child):last-child {
+    text-align: center;
+}
+
+.ranking-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.ranking-table tr.highlight-row {
+    background-color: #eff6ff;
+    font-weight: bold;
+}
+
+.pos-cell {
+    text-align: center;
+}
+
+.pos-badge {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+.pos-badge.top-pos {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.muted-cell {
+    text-align: center;
+    color: #64748b;
+}
+
+.pts-cell {
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .competicion-container {
+        gap: 30px;
+        padding: 0;
+    }
+
+    .competicion-col {
+        max-width: 100%;
+    }
+
+    .ranking-col {
+        max-width: 100%;
+    }
+
+    .match-teams {
+        font-size: 16px;
+    }
+
+    .match-card {
+        padding: 16px;
+    }
+}

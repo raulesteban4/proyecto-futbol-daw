@@ -1,6 +1,7 @@
 import { useEffect, useState, Fragment } from 'react';
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
+import './Perfil.css';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -8,18 +9,19 @@ function Perfil() {
     const { user } = useUser();
     const [pedidos, setPedidos] = useState([]);
     const [detallesVisibles, setDetallesVisibles] = useState({});
+    const [cargando, setCargando] = useState(true);
 
     useEffect(() => {
-        if (user && user.id) {
-            const token = localStorage.getItem('token_fc_canaveral');
-            axios.get(`${API}/api/pedidos/${user.id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-                .then(res => setPedidos(res.data))
-                .catch(err => console.error(err));
-        }
+        if (!user || !user.id) return;
+        const token = localStorage.getItem('token_fc_canaveral');
+        axios.get(`${API}/api/pedidos/${user.id}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(res => setPedidos(res.data))
+            .catch(err => console.error(err))
+            .finally(() => setCargando(false));
+
+        return () => setCargando(false);
     }, [user]);
 
     const verDetalles = (orderId) => {
@@ -28,9 +30,7 @@ function Perfil() {
         } else {
             const token = localStorage.getItem('token_fc_canaveral');
             axios.get(`${API}/api/pedidos/detalles/${orderId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                headers: { 'Authorization': `Bearer ${token}` }
             })
                 .then(res => {
                     setDetallesVisibles({ ...detallesVisibles, [orderId]: res.data });
@@ -39,60 +39,62 @@ function Perfil() {
         }
     };
 
-    if (!user) return <h2 style={{ textAlign: 'center', marginTop: '50px' }}>Inicia sesión para ver tu perfil</h2>;
-    
+    if (!user) return <h2 className="perfil-mensaje">Inicia sesión para ver tu perfil</h2>;
+    if (cargando) {
+        return (
+            <div className="page-loading">
+                <div className="spinner"></div>
+                <p>Cargando historial...</p>
+            </div>
+        );
+    }
+
     return (
-        <div style={{ maxWidth: '900px', margin: '50px auto', padding: '20px', backgroundColor: 'white', borderRadius: '10px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
-            <h2 style={{ color: '#1e3a8a', borderBottom: '2px solid #1e3a8a', paddingBottom: '10px' }}>
+        <div className="perfil-container">
+            <h2 className="perfil-heading">
                 Historial de Pedidos de {user.username}
             </h2>
-            
+
             {pedidos.length === 0 ? (
-                <p style={{ marginTop: '20px' }}>Aún no has realizado ninguna compra.</p>
+                <p className="perfil-vacio">Aún no has realizado ninguna compra.</p>
             ) : (
-                <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse' }}>
+                <table className="perfil-table">
                     <thead>
-                        <tr style={{ background: 'linear-gradient(135deg, #1e3a8a, #2563eb)', color: 'white' }}>
-                            <th style={{ padding: '12px', textAlign: 'left' }}>ID</th>
-                            <th style={{ padding: '12px', textAlign: 'left' }}>Fecha</th>
-                            <th style={{ padding: '12px', textAlign: 'left' }}>Total</th>
-                            <th style={{ padding: '12px', textAlign: 'left' }}>Estado</th>
-                            <th style={{ padding: '12px', textAlign: 'center' }}>Acción</th>
+                        <tr>
+                            <th className="text-left">ID</th>
+                            <th className="text-center">Fecha</th>
+                            <th className="text-center">Total</th>
+                            <th className="text-center">Estado</th>
+                            <th className="text-center">Acción</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pedidos.map(p => (
                             <Fragment key={p.id}>
-                                <tr style={{ borderBottom: '1px solid #eee' }}>
-                                    <td style={{ padding: '12px' }}>#{p.id}</td>
-                                    <td style={{ padding: '12px' }}>{new Date(p.fecha).toLocaleDateString()}</td>
-                                    <td style={{ padding: '12px' }}>{p.total}€</td>
-                                    <td style={{ padding: '12px' }}>
-                                        <span style={{ 
-                                            padding: '5px 10px', 
-                                            borderRadius: '15px', 
-                                            fontSize: '12px',
-                                            backgroundColor: p.estado === 'pendiente' ? '#ffeeba' : '#c3e6cb',
-                                            color: p.estado === 'pendiente' ? '#856404' : '#155724'
-                                        }}>
+                                <tr className="pedido-row">
+                                    <td className="cell">#{p.id}</td>
+                                    <td className="cell text-center">{new Date(p.fecha).toLocaleDateString()}</td>
+                                    <td className="cell text-center">{p.total}€</td>
+                                    <td className="cell text-center">
+                                        <span className={`estado-badge ${p.estado === 'pendiente' ? 'estado-pendiente' : 'estado-enviado'}`}>
                                             {p.estado}
                                         </span>
                                     </td>
-                                    <td style={{ padding: '12px', textAlign: 'center' }}>
-                                        <button 
+                                    <td className="cell text-center">
+                                        <button
+                                            className="btn-ver-detalles"
                                             onClick={() => verDetalles(p.id)}
-                                            style={{ backgroundColor: '#1e3a8a', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer', fontSize: '12px' }}
                                         >
                                             {detallesVisibles[p.id] ? 'Ocultar' : 'Ver productos'}
                                         </button>
                                     </td>
                                 </tr>
                                 {detallesVisibles[p.id] && (
-                                    <tr>
-                                        <td colSpan="5" style={{ backgroundColor: '#fdfdfd', padding: '15px', borderLeft: '4px solid #1e3a8a' }}>
-                                            <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+                                    <tr className="detalles-row">
+                                        <td colSpan="5">
+                                            <ul className="detalles-lista">
                                                 {detallesVisibles[p.id].map(item => (
-                                                    <li key={item.id} style={{ padding: '8px 0', borderBottom: '1px dashed #eee', fontSize: '14px' }}>
+                                                    <li key={item.id}>
                                                         <strong>{item.nombre}</strong> — {item.cantidad} x {item.precio_unitario}€
                                                     </li>
                                                 ))}

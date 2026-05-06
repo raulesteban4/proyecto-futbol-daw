@@ -8,12 +8,23 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 function Tienda() {
     const { cart, addToCart } = useCart();
     const [productos, setProductos] = useState([]);
+    const [cargando, setCargando] = useState(true);
 
     useEffect(() => {
         axios.get(`${API}/api/productos`)
             .then(res => setProductos(res.data))
-            .catch(err => console.error(err));
+            .catch(err => console.error(err))
+            .finally(() => setCargando(false));
     }, []);
+
+    if (cargando) {
+        return (
+            <div className="page-loading">
+                <div className="spinner"></div>
+                <p>Cargando tienda...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="tienda-container">
@@ -73,7 +84,6 @@ function Tienda() {
             </div>
         </div>
     );
-
 }
 
 export default Tienda;

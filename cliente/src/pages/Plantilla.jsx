@@ -6,13 +6,15 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 function Plantilla() {
     const [jugadores, setJugadores] = useState([]);
+    const [cargando, setCargando] = useState(true);
 
     useEffect(() => {
         axios.get(`${API}/api/jugadores`)
             .then(res => {
                 const misJugadores = res.data.filter(p => p.team_id === 1);
                 setJugadores(misJugadores);
-            });
+            })
+            .finally(() => setCargando(false));
     }, []);
 
     const renderSeccion = (titulo, pos) => {
@@ -51,6 +53,15 @@ function Plantilla() {
             </div>
         );
     };
+
+    if (cargando) {
+        return (
+            <div className="page-loading">
+                <div className="spinner"></div>
+                <p>Cargando plantilla...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="squad-container">
