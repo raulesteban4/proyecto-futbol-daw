@@ -3,6 +3,7 @@ const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 const SECRET_KEY = process.env.SECRET_KEY || "f8a2_!99_DsK2l-02mZ_QpX92_#canaveral_secure_2026";
 
@@ -128,40 +129,46 @@ app.put('/api/admin/ventas/:id', verificarToken, (req, res) => {
 });
 
 // POST /api/registro
-app.post('/api/registro', (req, res) => {
+app.post('/api/registro', async (req, res) => {
     const { username, password, email } = req.body;
     if (!username || !password || !email) {
         return res.status(400).json({ message: "Faltan campos obligatorios" });
     }
-    const sql = "INSERT INTO users (username, password, email, rol) VALUES ($1, $2, $3, 'user')";
-    pool.query(sql, [username, password, email], (err, result) => {
-        if (err) {
-            if (err.code === '23505') {
-                return res.status(400).json({ message: "El usuario o email ya están registrados" });
-            }
-            return res.status(500).json(err);
-        }
+    try {
+        const hash = await bcrypt.hash(password, 10);
+        const sql = "INSERT INTO users (username, password, email, rol) VALUES ($1, $2, $3, 'user')";
+        await pool.query(sql, [username, hash, email]);
         res.status(200).json({ message: "Usuario registrado" });
-    });
+    } catch (err) {
+        if (err.code === '23505') {
+            return res.status(400).json({ message: "El usuario o email ya están registrados" });
+        }
+        return res.status(500).json(err);
+    }
 });
 
 // POST /api/login
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
-    pool.query("SELECT id, username, rol FROM users WHERE email = $1 AND password = $2", [email, password], (err, result) => {
-        if (err) return res.status(500).send(err);
-        if (result.rows.length > 0) {
-            const user = result.rows[0];
-            const token = jwt.sign(
-                { id: user.id, rol: user.rol },
-                SECRET_KEY,
-                { expiresIn: '30m' }
-            );
-            return res.json({ user, token });
-        } else {
-            return res.status(401).send("Correo o contraseña incorrectos");
+    try {
+        const result = await pool.query("SELECT id, username, password, rol FROM users WHERE email = $1", [email]);
+        if (result.rows.length === 0) {
+            return res.status(401).json({ message: "Correo o contraseña incorrectos" });
         }
-    });
+        const user = result.rows[0];
+        const valid = await bcrypt.compare(password, user.password);
+        if (!valid) {
+            return res.status(401).json({ message: "Correo o contraseña incorrectos" });
+        }
+        const token = jwt.sign(
+            { id: user.id, rol: user.rol },
+            SECRET_KEY,
+            { expiresIn: '30m' }
+        );
+        res.json({ user: { id: user.id, username: user.username, rol: user.rol }, token });
+    } catch (err) {
+        return res.status(500).json(err);
+    }
 });
 
 // POST /api/pedidos
