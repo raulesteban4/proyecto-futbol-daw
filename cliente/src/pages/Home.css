@@ -325,10 +325,10 @@
     background: transparent;
     color: var(--primary);
     border: 2px solid var(--primary);
-    padding: 10px 24px;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 0.82rem;
+    padding: 7px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.75rem;
     cursor: pointer;
     transition: all 0.2s ease;
 }
