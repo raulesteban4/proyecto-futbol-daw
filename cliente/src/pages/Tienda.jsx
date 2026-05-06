@@ -42,8 +42,8 @@ function Tienda() {
                                 alt={p.nombre}
                                 style={{
                                     width: '100%',
-                                    height: '200px',
-                                    objectFit: 'cover',
+                                    height: '250px',
+                                    objectFit: 'contain',
                                     filter: stockRealDisponible <= 0 ? 'grayscale(100%)' : 'none',
                                     opacity: stockRealDisponible <= 0 ? 0.7 : 1
                                 }}

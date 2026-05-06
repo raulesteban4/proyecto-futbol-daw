@@ -65,7 +65,7 @@ function Carrito() {
             <div className="carrito-lista">
                 {cart.map(item => (
                     <div key={item.id} className="item-carrito">
-                        <img src={item.imagen_url} alt={item.nombre} />
+                        <img src={item.imagen_url || 'https://www.paradas.es/export/sites/paradas/.galleries/imagenes-noticias-test/futbol_1576149772602.jpg'} alt={item.nombre} />
                         <div className="item-info">
                             <h3>{item.nombre}</h3>
                             <p>Precio: {item.precio}€</p>
