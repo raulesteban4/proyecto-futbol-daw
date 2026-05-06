@@ -63,7 +63,27 @@
 .nav-user-desktop {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
+}
+
+.theme-toggle {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  padding: 0;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
 }
 
 .auth-buttons {
@@ -207,6 +227,31 @@
   width: 50%;
   border: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-theme-toggle {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
+
+.mobile-theme-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.mobile-theme-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .mobile-user-section a {

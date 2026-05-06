@@ -16,6 +16,7 @@
   --bg-body: #f8fafc;
   --bg-card: #ffffff;
   --bg-hover: #f1f5f9;
+  --bg-input: #ffffff;
   
   /* TEXTOS */
   --text-main: #0f172a; 
@@ -36,6 +37,26 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+.dark {
+  --bg-body: #0f172a;
+  --bg-card: #1e293b;
+  --bg-hover: #334155;
+  --bg-input: #1e293b;
+  
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-light: #64748b;
+  
+  --border-light: #334155;
+  --border-default: #475569;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
 }
 
 * {
@@ -390,6 +411,128 @@ tbody tr:last-child td {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
+}
+
+/* DARK MODE OVERRIDES */
+.dark .home-loading,
+.dark .page-loading {
+    background-color: var(--bg-body);
+}
+
+.dark .perfil-container {
+    background-color: var(--bg-card);
+}
+
+.dark .detalles-row td {
+    background-color: var(--bg-hover);
+}
+
+.dark .tienda-container {
+    background-color: var(--bg-body);
+}
+
+.dark .carrito-container,
+.dark .carrito-vacio {
+    background-color: var(--bg-body);
+}
+
+.dark .item-carrito {
+    background-color: var(--bg-card);
+}
+
+.dark .carrito-resumen {
+    background-color: var(--bg-card);
+}
+
+.dark .competicion-container .match-card,
+.dark .ranking-table-wrapper {
+    background-color: var(--bg-card);
+}
+
+.dark .standings-card,
+.dark .match-row,
+.dark .player-card,
+.dark .store-card,
+.dark .empty-state {
+    background-color: var(--bg-card);
+}
+
+.dark .standings-table__td {
+    background-color: var(--bg-card);
+}
+
+.dark .standings-table__row--highlight .standings-table__td {
+    background-color: rgba(59, 130, 246, 0.15);
+}
+
+.dark .match-row__score {
+    background-color: var(--bg-hover);
+}
+
+.dark .player-card__pos {
+    background-color: var(--bg-hover);
+}
+
+.dark .store-card__cat {
+    background-color: rgba(59, 130, 246, 0.15);
+}
+
+.dark .store-card__img {
+    background-color: var(--bg-hover);
+}
+
+.dark .pos-badge--default {
+    background-color: var(--bg-hover);
+}
+
+.dark .next-match__inner {
+    background-color: var(--bg-card);
+}
+
+.dark .stats-bar__inner {
+    background-color: var(--bg-card);
+}
+
+.dark .admin-container {
+    background-color: var(--bg-body);
+}
+
+.dark .login-container,
+.dark .registro-container {
+    background-color: var(--bg-card);
+}
+
+/* DARK MODE SCROLLBAR */
+.dark ::-webkit-scrollbar-track {
+    background: var(--bg-hover);
+}
+
+/* DARK MODE HERO */
+.dark .hero-bg {
+    background:
+        radial-gradient(circle at 15% 70%, rgba(250, 204, 21, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 25%, rgba(59, 130, 246, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.01) 0%, transparent 70%);
+}
+
+.dark .hero-wave svg path {
+    fill: var(--bg-body);
+}
+
+/* DARK MODE TRANSITION */
+html {
+    transition: background-color 0.3s ease;
+}
+
+body,
+.main-container,
+.tarjeta-jugador,
+.card,
+table,
+input,
+select,
+textarea {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 /* RESPONSIVE DESIGN */

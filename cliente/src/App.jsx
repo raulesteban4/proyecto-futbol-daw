@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useUser } from './context/UserContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -70,7 +71,11 @@ function AppContent() {
 }
 
 function App() {
-    return <AppContent />;
+    return (
+        <ThemeProvider>
+            <AppContent />
+        </ThemeProvider>
+    );
 }
 
 export default App;
