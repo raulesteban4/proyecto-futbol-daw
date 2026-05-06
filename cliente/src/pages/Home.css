@@ -400,7 +400,7 @@
 .match-row {
     display: flex;
     align-items: stretch;
-    background: white;
+    background: var(--bg-card);
     border-radius: 12px;
     border: 1px solid var(--border-light);
     overflow: hidden;
@@ -511,7 +511,7 @@
 
 /* STANDINGS */
 .standings-card {
-    background: white;
+    background: var(--bg-card);
     border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
@@ -575,6 +575,13 @@
     font-weight: 600;
 }
 
+.dark .standings-table__td {
+    background: var(--bg-card);
+}
+.dark .standings-table__row--highlight .standings-table__td {
+    background: rgba(59, 130, 246, 0.15);
+}
+
 .pos-badge {
     display: inline-flex;
     align-items: center;
@@ -601,6 +608,15 @@
     color: var(--text-muted);
 }
 
+.dark .pos-badge--gold {
+    background: #78350f;
+    color: #fde68a;
+}
+.dark .pos-badge--silver {
+    background: #312e81;
+    color: #a5b4fc;
+}
+
 .team-star {
     margin-right: 4px;
 }
@@ -625,6 +641,24 @@
     transform: translateY(-4px);
     box-shadow: 0 8px 22px rgba(30, 58, 138, 0.12);
     border-color: var(--primary-light);
+}
+
+.dark .player-card {
+    background: var(--bg-card);
+    border-color: var(--border-light);
+}
+.dark .player-card:hover {
+    box-shadow: 0 8px 22px rgba(59, 130, 246, 0.2);
+}
+.dark .player-card__name {
+    color: #f1f5f9;
+}
+.dark .player-card__pos {
+    background: #1e293b;
+    color: #94a3b8;
+}
+.dark .player-card__stats {
+    border-top-color: var(--border-light);
 }
 
 .player-card__dorsal {
@@ -707,7 +741,7 @@
 }
 
 .store-card {
-    background: white;
+    background: var(--bg-card);
     border-radius: 14px;
     overflow: hidden;
     border: 1px solid var(--border-light);
@@ -774,6 +808,11 @@
     margin-bottom: 6px;
 }
 
+.dark .store-card__cat {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+}
+
 .store-card__name {
     font-size: 0.88rem;
     font-weight: 700;
@@ -800,7 +839,7 @@
     padding: 36px 20px;
     color: var(--text-muted);
     font-size: 0.9rem;
-    background: white;
+    background: var(--bg-card);
     border-radius: 12px;
     border: 1px dashed var(--border-light);
 }
