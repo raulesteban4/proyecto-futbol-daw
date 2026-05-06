@@ -24,10 +24,10 @@ function Home() {
                     axios.get(`${API}/api/jugadores`)
                 ]);
 
-                setPartidos(partidosRes.data.slice(0, 3));
-                setClasificacion(clasifRes.data.slice(0, 5));
-                setProductos(prodRes.data.slice(0, 4));
-                setJugadores(jugRes.data.slice(0, 6));
+                setPartidos(partidosRes.data);
+                setClasificacion(clasifRes.data);
+                setProductos(prodRes.data.filter(p => p.stock > 0));
+                setJugadores(jugRes.data.filter(j => j.team_id === 1));
             } catch (error) {
                 console.error('Error cargando datos:', error);
             } finally {
