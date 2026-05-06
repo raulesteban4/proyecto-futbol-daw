@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useUser } from './context/UserContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
@@ -24,6 +24,17 @@ function LoadingScreen() {
     );
 }
 
+function NavigateBridge() {
+    const navigate = useNavigate();
+    const { setNavigate } = useUser();
+
+    useEffect(() => {
+        setNavigate(navigate);
+    }, [navigate, setNavigate]);
+
+    return null;
+}
+
 function AppContent() {
     const { user } = useUser();
     const [loading, setLoading] = useState(true);
@@ -38,7 +49,8 @@ function AppContent() {
     }
 
     return (
-        <BrowserRouter>
+        <>
+            <NavigateBridge />
             <div className="app-layout">
                 <Navbar />
                 <main className="main-container">
@@ -66,14 +78,16 @@ function AppContent() {
                 </main>
                 <Footer />
             </div>
-        </BrowserRouter>
+        </>
     );
 }
 
 function App() {
     return (
         <ThemeProvider>
-            <AppContent />
+            <BrowserRouter>
+                <AppContent />
+            </BrowserRouter>
         </ThemeProvider>
     );
 }

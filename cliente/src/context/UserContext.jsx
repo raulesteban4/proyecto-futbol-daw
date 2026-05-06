@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 
 const UserContext = createContext();
@@ -8,12 +8,21 @@ export const UserProvider = ({ children }) => {
         const savedUser = localStorage.getItem('user_fc_canaveral');
         return savedUser ? JSON.parse(savedUser) : null;
     });
+    const navigateRef = useRef(null);
+
+    const setNavigate = useCallback((navFn) => {
+        navigateRef.current = navFn;
+    }, []);
 
     const logout = useCallback(() => {
         setUser(null);
         localStorage.removeItem('user_fc_canaveral');
         localStorage.removeItem('token_fc_canaveral');
-        window.location.href = '/login';
+        if (navigateRef.current) {
+            navigateRef.current('/login');
+        } else {
+            window.location.href = '/login';
+        }
     }, []);
 
     useEffect(() => {
@@ -27,7 +36,6 @@ export const UserProvider = ({ children }) => {
 
     const login = (userData) => setUser(userData);
 
-    // INTERCEPTOR DE SESIÓN CADUCADA
     useEffect(() => {
         const interceptor = axios.interceptors.response.use(
             (response) => response,
@@ -36,7 +44,11 @@ export const UserProvider = ({ children }) => {
                     setUser(null);
                     localStorage.removeItem('user_fc_canaveral');
                     localStorage.removeItem('token_fc_canaveral');
-                    window.location.href = '/login';
+                    if (navigateRef.current) {
+                        navigateRef.current('/login');
+                    } else {
+                        window.location.href = '/login';
+                    }
                 }
                 return Promise.reject(error);
             }
@@ -46,7 +58,7 @@ export const UserProvider = ({ children }) => {
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, login, logout }}>
+        <UserContext.Provider value={{ user, login, logout, setNavigate }}>
             {children}
         </UserContext.Provider>
     );
