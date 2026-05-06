@@ -62,7 +62,7 @@ function ClasificacionTab({ data, setData }) {
                                 <input id={`pj-${e.id}`} type="number" defaultValue={e.pj} style={{ width: '50px' }} />
                             </td>
                             <td className="text-center">
-                                <input id={`pts-${e.id}`} type="number" defaultValue={e.puntos} style={{ width: '50px' }} />
+                                <input id={`pts-${e.id}`} type="number" defaultValue={e.puntos} style={{ width: '60px' }} />
                             </td>
                             <td className="text-center">
                                 <input id={`pos-${e.id}`} type="number" defaultValue={e.posicion} style={{ width: '50px' }} />

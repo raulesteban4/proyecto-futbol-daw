@@ -27,7 +27,12 @@ function Home() {
                 setPartidos(partidosRes.data);
                 setClasificacion(clasifRes.data);
                 setProductos(prodRes.data.filter(p => p.stock > 0));
-                setJugadores(jugRes.data.filter(j => j.team_id === 1));
+
+                const topJugadores = jugRes.data
+                    .filter(j => j.team_id === 1)
+                    .sort((a, b) => ((b.goles || 0) + (b.asistencias || 0)) - ((a.goles || 0) + (a.asistencias || 0)))
+                    .slice(0, 6);
+                setJugadores(topJugadores);
             } catch (error) {
                 console.error('Error cargando datos:', error);
             } finally {
