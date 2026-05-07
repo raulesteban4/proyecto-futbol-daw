@@ -229,7 +229,7 @@
 .next-match__inner {
     max-width: 720px;
     margin: 0 auto;
-    background: rgba(255, 255, 255, 0.556);
+    background: var(--bg-card);
     border-radius: 20px;
     padding: 28px 32px;
     text-align: center;
