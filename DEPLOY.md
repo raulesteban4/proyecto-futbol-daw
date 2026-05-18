@@ -9,15 +9,9 @@
 
 ## PASO 1: Push de código a GitHub
 
-Tu repo ya está en GitHub. Asegúrate de que los últimos cambios están subidos:
 
-```bash
-git add .
-git commit -m "Migración a PostgreSQL Supabase y preparación para despliegue"
-git push origin main
-```
 
-> ⚠️ **Importante**: El archivo `servidor/.env` NO debe subirse a GitHub (ya está en .gitignore). Las variables se configurarán en Render.
+El archivo `servidor/.env` NO debe subirse a GitHub (ya está en .gitignore). Las variables se configurarán en Render.
 
 ---
 
