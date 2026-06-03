@@ -1,8 +1,13 @@
+import { useState, useRef } from 'react';
 import axios from 'axios';
 import './tabs.css';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function TiendaTab({ data, setData }) {
-    const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const [preview, setPreview] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const fileRef = useRef(null);
 
     const cargarDatos = () => {
         const token = localStorage.getItem('token_fc_canaveral');
@@ -11,6 +16,68 @@ function TiendaTab({ data, setData }) {
         })
             .then(res => setData(res.data))
             .catch(err => console.error("Error al cargar productos:", err));
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => setPreview(reader.result);
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const uploadImage = async () => {
+        const file = fileRef.current?.files[0];
+        if (!file) return null;
+        setUploading(true);
+        const token = localStorage.getItem('token_fc_canaveral');
+        const formData = new FormData();
+        formData.append('imagen', file);
+        try {
+            const res = await axios.post(`${API}/api/upload`, formData, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+            setPreview(null);
+            if (fileRef.current) fileRef.current.value = '';
+            setUploading(false);
+            return res.data.url;
+        } catch (err) {
+            alert('Error al subir imagen');
+            setUploading(false);
+            return null;
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('token_fc_canaveral');
+        let imagenUrl = e.target.imagen_url.value || 'https://via.placeholder.com/150';
+
+        if (fileRef.current?.files[0]) {
+            const uploaded = await uploadImage();
+            if (uploaded) imagenUrl = uploaded;
+        }
+
+        const producto = {
+            nombre: e.target.nombre.value,
+            precio: e.target.precio.value,
+            stock: e.target.stock.value,
+            categoria: e.target.categoria.value,
+            descripcion: e.target.descripcion.value,
+            imagen_url: imagenUrl,
+        };
+        axios.post(`${API}/api/admin/productos`, producto, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        }).then(() => {
+            alert("Producto añadido");
+            e.target.reset();
+            setPreview(null);
+            cargarDatos();
+        });
     };
 
     const actualizarProducto = (id) => {
@@ -50,32 +117,37 @@ function TiendaTab({ data, setData }) {
     return (
         <div>
             <h3>Añadir Nuevo Producto</h3>
-            <form onSubmit={(e) => {
-                e.preventDefault();
-                const token = localStorage.getItem('token_fc_canaveral');
-                const producto = {
-                    nombre: e.target.nombre.value,
-                    precio: e.target.precio.value,
-                    stock: e.target.stock.value,
-                    categoria: e.target.categoria.value,
-                    descripcion: e.target.descripcion.value,
-                    imagen_url: e.target.imagen.value || 'https://via.placeholder.com/150'
-                };
-                axios.post(`${API}/api/admin/productos`, producto, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                }).then(() => {
-                    alert("Producto añadido");
-                    e.target.reset();
-                    cargarDatos();
-                });
-            }} className="tab-form-grid">
+            <form onSubmit={handleSubmit} className="tab-form-grid">
                 <input name="nombre" placeholder="Nombre" required className="form-input" />
                 <input name="precio" type="number" step="0.01" placeholder="Precio (€)" required className="form-input" />
                 <input name="stock" type="number" placeholder="Stock" required className="form-input" />
                 <input name="categoria" placeholder="Categoría" required className="form-input" />
-                <input name="imagen" placeholder="URL Imagen" className="form-input" />
+                <input name="imagen_url" placeholder="URL Imagen (o sube un archivo)" className="form-input" />
+                <div>
+                    <input
+                        ref={fileRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="form-input"
+                    />
+                    {preview && (
+                        <div style={{ marginTop: 8, position: 'relative', display: 'inline-block' }}>
+                            <img src={preview} alt="Preview" style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: 8 }} />
+                            <button
+                                type="button"
+                                onClick={() => { setPreview(null); if (fileRef.current) fileRef.current.value = ''; }}
+                                style={{ position: 'absolute', top: -8, right: -8, background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: 22, height: 22, cursor: 'pointer', fontSize: 12, lineHeight: '22px', textAlign: 'center' }}
+                            >
+                                x
+                            </button>
+                        </div>
+                    )}
+                </div>
                 <textarea name="descripcion" placeholder="Descripción" className="form-input tab-form-grid.full-width" />
-                <button type="submit" className="btn-ok tab-form-grid.full-width">PUBLICAR PRODUCTO</button>
+                <button type="submit" className="btn-ok tab-form-grid.full-width" disabled={uploading}>
+                    {uploading ? 'Subiendo imagen...' : 'PUBLICAR PRODUCTO'}
+                </button>
             </form>
 
             <h3>Gestionar Inventario</h3>

@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useUser } from '../context/UserContext';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import StripeCheckout from '../components/StripeCheckout';
 import './Carrito.css';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -10,41 +11,17 @@ function Carrito() {
     const { cart, removeFromCart, clearCart } = useCart();
     const { user } = useUser();
     const navigate = useNavigate();
+    const [showPayment, setShowPayment] = useState(false);
 
     const total = cart.reduce((acc, item) => acc + (item.precio * item.quantity), 0);
 
     const handleFinalizarCompra = () => {
         if (!user) {
-            alert("⚠️ Debes iniciar sesión para realizar un pedido.");
+            alert("Debes iniciar sesión para realizar un pedido.");
             navigate('/login');
             return;
         }
-
-        const token = localStorage.getItem('token_fc_canaveral');
-
-        axios.post(`${API}/api/pedidos`, {
-            user_id: user.id,
-            total: total.toFixed(2),
-            productos: cart
-        }, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-            .then(res => {
-                navigate('/confirmacion', {
-                    state: {
-                        pedidoId: res.data.pedidoId,
-                        total: total.toFixed(2),
-                        productos: cart
-                    }
-                });
-                clearCart();
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Hubo un error al procesar tu pedido. Inténtalo de nuevo.");
-            });
+        setShowPayment(true);
     };
 
     if (cart.length === 0) {
@@ -87,6 +64,14 @@ function Carrito() {
                     FINALIZAR COMPRA
                 </button>
             </div>
+
+            {showPayment && (
+                <StripeCheckout
+                    total={total}
+                    productos={cart}
+                    onClose={() => setShowPayment(false)}
+                />
+            )}
         </div>
     );
 }

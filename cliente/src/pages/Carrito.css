@@ -54,3 +54,51 @@
 .dark .btn-pagar {
     background: #3b82f6;
 }
+
+.stripe-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.stripe-modal {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 450px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.dark .stripe-modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+}
+
+.push-subscribe {
+    display: inline-block;
+}
+.push-btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+.push-btn--inactive {
+    background: #e2e8f0;
+    color: #475569;
+}
+.push-btn--active {
+    background: #22c55e;
+    color: white;
+}
+.dark .push-btn--inactive {
+    background: #334155;
+    color: #94a3b8;
+}

@@ -4,6 +4,11 @@ const { Pool } = require('pg');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const { sendOrderShipped, sendOrderConfirmation } = require('./services/emailService');
+const { addSubscription, removeSubscription, notifyMatch, notifyProduct } = require('./services/pushService');
 
 const SECRET_KEY = process.env.SECRET_KEY || "f8a2_!99_DsK2l-02mZ_QpX92_#canaveral_secure_2026";
 
@@ -25,7 +30,27 @@ app.use(cors({
     },
     credentials: true
 }));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = multer.memoryStorage();
+const upload = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
+        if (allowed.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Formato no válido. Usa JPEG, PNG, WebP o AVIF.'));
+        }
+    }
+});
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -119,13 +144,22 @@ app.get('/api/admin/ventas', verificarToken, (req, res) => {
 });
 
 // PUT /api/admin/ventas/:id
-app.put('/api/admin/ventas/:id', verificarToken, (req, res) => {
+app.put('/api/admin/ventas/:id', verificarToken, async (req, res) => {
     const { id } = req.params;
     const { estado } = req.body;
-    pool.query("UPDATE orders SET estado = $1 WHERE id = $2", [estado, id], (err, result) => {
-        if (err) return res.status(500).send(err);
+    try {
+        await pool.query("UPDATE orders SET estado = $1 WHERE id = $2", [estado, id]);
+        if (estado === 'enviado') {
+            const order = await pool.query("SELECT u.email, o.total FROM orders o JOIN users u ON o.user_id = u.id WHERE o.id = $1", [id]);
+            if (order.rows.length > 0) {
+                sendOrderShipped(order.rows[0].email, id);
+            }
+        }
         res.json({ message: "Estado actualizado" });
-    });
+    } catch (err) {
+        console.error("Error actualizando venta:", err);
+        res.status(500).json({ error: err.message });
+    }
 });
 
 // POST /api/registro
@@ -195,6 +229,13 @@ app.post('/api/pedidos', verificarToken, (req, res) => {
                     if (errStock) console.error(`Error actualizando stock del producto ${item.id}:`, errStock);
                 });
             });
+
+            pool.query("SELECT u.email FROM users WHERE id = $1", [user_id], (errEmail, resultEmail) => {
+                if (!errEmail && resultEmail.rows.length > 0) {
+                    sendOrderConfirmation(resultEmail.rows[0].email, pedidoId, total, productos);
+                }
+            });
+
             res.status(200).json({ message: "Pedido completo guardado", pedidoId });
         });
     });
@@ -379,7 +420,128 @@ app.get('/api/admin/stats', verificarToken, (req, res) => {
     });
 });
 
-// GET /health
+// GET /api/admin/stats/ventas-por-dia — para Chart.js
+app.get('/api/admin/stats/ventas-por-dia', verificarToken, (req, res) => {
+    const sql = `
+        SELECT DATE(fecha) as dia, SUM(total) as total, COUNT(*) as pedidos
+        FROM orders
+        GROUP BY DATE(fecha)
+        ORDER BY dia ASC
+        LIMIT 30
+    `;
+    pool.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error en ventas-por-dia:', err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(result.rows);
+    });
+});
+
+// GET /api/admin/stats/productos-mas-vendidos — para Chart.js
+app.get('/api/admin/stats/productos-mas-vendidos', verificarToken, (req, res) => {
+    const sql = `
+        SELECT p.nombre, SUM(oi.cantidad) as total_vendido, SUM(oi.cantidad * oi.precio_unitario) as ingresos
+        FROM order_items oi
+        JOIN products p ON oi.product_id = p.id
+        GROUP BY oi.product_id, p.nombre
+        ORDER BY total_vendido DESC
+        LIMIT 10
+    `;
+    pool.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error en productos-mas-vendidos:', err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(result.rows);
+    });
+});
+
+// ==================== STRIPE ====================
+
+// POST /api/create-payment-intent
+app.post('/api/create-payment-intent', verificarToken, async (req, res) => {
+    const { amount } = req.body;
+    try {
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: Math.round(amount * 100),
+            currency: 'eur',
+            automatic_payment_methods: { enabled: true },
+        });
+        res.json({ clientSecret: paymentIntent.client_secret });
+    } catch (err) {
+        console.error('Error creating payment intent:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ==================== CLOUDINARY UPLOAD ====================
+
+// POST /api/upload
+app.post('/api/upload', verificarToken, upload.single('imagen'), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ error: 'No se envió ninguna imagen' });
+
+        const b64 = Buffer.from(req.file.buffer).toString('base64');
+        const dataUri = `data:${req.file.mimetype};base64,${b64}`;
+
+        const result = await cloudinary.uploader.upload(dataUri, {
+            folder: 'fc_canaveral',
+            resource_type: 'image',
+        });
+
+        res.json({ url: result.secure_url, public_id: result.public_id });
+    } catch (err) {
+        console.error('Error uploading to Cloudinary:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ==================== WEB PUSH ====================
+
+// POST /api/subscribe
+app.post('/api/subscribe', (req, res) => {
+    const subscription = req.body;
+    if (!subscription || !subscription.endpoint) {
+        return res.status(400).json({ error: 'Suscripción inválida' });
+    }
+    addSubscription(subscription);
+    res.status(201).json({ message: 'Suscripto correctamente' });
+});
+
+// POST /api/unsubscribe
+app.post('/api/unsubscribe', (req, res) => {
+    const { endpoint } = req.body;
+    if (endpoint) removeSubscription(endpoint);
+    res.json({ message: 'Desuscripto correctamente' });
+});
+
+// POST /api/notify/partido — notificar a todos sobre un partido
+app.post('/api/notify/partido', verificarToken, async (req, res) => {
+    const { title, body } = req.body;
+    try {
+        await notifyMatch(title || '⚽ Nuevo partido', body || 'Consulta el calendario del FC Cañaveral');
+        res.json({ message: 'Notificación enviada' });
+    } catch (err) {
+        console.error('Error enviando notificación:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST /api/notify/producto — notificar a todos sobre un producto nuevo
+app.post('/api/notify/producto', verificarToken, async (req, res) => {
+    const { title, body } = req.body;
+    try {
+        await notifyProduct(title || '🛒 Nuevo producto', body || 'Echa un vistazo a la nueva equipación');
+        res.json({ message: 'Notificación enviada' });
+    } catch (err) {
+        console.error('Error enviando notificación:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ==================== HEALTH ====================
+
 app.get('/health', async (req, res) => {
     try {
         await pool.query('SELECT 1');

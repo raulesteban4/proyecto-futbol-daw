@@ -56,6 +56,31 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(staleWhileRevalidate(request))
 })
 
+self.addEventListener('push', (event) => {
+  const data = event.data ? event.data.json() : { title: 'FC Cañaveral', body: 'Novedades en la web' }
+  const options = {
+    body: data.body,
+    icon: data.icon || '/pwa-icon-192.svg',
+    badge: '/pwa-icon-192.svg',
+    data: { url: data.url || '/' },
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  )
+})
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+  const url = event.notification.data?.url || '/'
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      const client = windowClients.find((c) => c.url.includes(self.location.origin) && 'focus' in c)
+      if (client) return client.focus()
+      if (clients.openWindow) return clients.openWindow(url)
+    })
+  )
+})
+
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(CACHE_NAME)
   const cached = await cache.match(request)
